@@ -7,7 +7,7 @@ import org.json.JSONObject;
  */
 public class HourlyForecast extends JSONParser {
 
-    public static final String KEY_WEATHER = "weather";
+    public static final String KEY_HOURLY = "hourly";
 
     private static final String KEY_TIME = "time";
     private static final String KEY_TEMP_C = "tempC";
@@ -39,6 +39,6 @@ public class HourlyForecast extends JSONParser {
     private static final String KEY_THUNDER_CHANCE = "chanceofthunder";
     
     public HourlyForecast(JSONObject jsonDefinition) {
-        //TODO parse
+        //TODO parse hourly forecast
     }
 }

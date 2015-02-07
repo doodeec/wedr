@@ -8,8 +8,10 @@ import com.doodeec.scom.listener.BaseRequestListener;
 import com.doodeec.scom.listener.JSONRequestListener;
 import com.doodeec.weather.android.WedrConfig;
 import com.doodeec.weather.android.client.data.WeatherData;
+import com.doodeec.weather.android.client.parser.WeatherDataParser;
 import com.doodeec.weather.android.util.WedrLog;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -28,9 +30,9 @@ public class APIService {
      * 2. Integer - number of days to forecast
      * 3. and 4. Float - location Latitude (3.) and Longitude (4.)
      */
-    private static final String SERVER_URL_SKELETON = "http://api.worldweatheronline.com/free/v2/weather.ashx?key=%s&format=json&num_of_days=%d&q=%.5f,%.5f";
+    private static final String SERVER_URL_SKELETON = "http://api.worldweatheronline.com/free/v2/weather.ashx?key=%s&format=json&num_of_days=%d&q=%.7f,%.7f";
 
-    public static CancellableServerRequest loadWeatherForLocation(float latitude, float longitude, final BaseRequestListener<WeatherData> listener) {
+    public static CancellableServerRequest loadWeatherForLocation(double latitude, double longitude, final BaseRequestListener<WeatherData> listener) {
         String url = String.format(SERVER_URL_SKELETON,
                 WedrConfig.API_KEY,
                 WedrConfig.FORECAST_DAYS,
@@ -40,15 +42,17 @@ public class APIService {
             @Override
             public void onSuccess(JSONObject object) {
                 WedrLog.d("Success getting weather object");
-                
-                //TODO parse
-                
-                listener.onSuccess(null);
+
+                try {
+                    listener.onSuccess(WeatherDataParser.parseWeatherData(object));
+                } catch (JSONException e) {
+                    onError(new RequestError(e));
+                }
             }
 
             @Override
             public void onError(RequestError requestError) {
-                WedrLog.d("Error getting weather object");
+                WedrLog.e("Error getting weather object");
                 listener.onError(requestError);
             }
 

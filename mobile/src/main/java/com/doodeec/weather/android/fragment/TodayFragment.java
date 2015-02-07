@@ -8,9 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.doodeec.weather.android.R;
+import com.doodeec.weather.android.client.data.WeatherData;
 
 public class TodayFragment extends Fragment {
 
+    public static final String TODAY_FRG_TAG = "todayFragment";
+    
     private OnTodayInteractionListener mListener;
 
     public static TodayFragment newInstance() {
@@ -49,6 +52,10 @@ public class TodayFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+    
+    public void updateData(WeatherData weatherData) {
+
     }
 
     public interface OnTodayInteractionListener {

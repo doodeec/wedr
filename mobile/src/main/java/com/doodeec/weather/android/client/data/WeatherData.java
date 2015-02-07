@@ -1,9 +1,6 @@
 package com.doodeec.weather.android.client.data;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -11,27 +8,13 @@ import java.util.List;
  */
 public class WeatherData extends JSONParser {
 
-    public static final String KEY_WEATHER = "weather";
-
-    private static final String KEY_DATE = "date";
-    private static final String KEY_MAX_TEMP_C = "maxtempC";
-    private static final String KEY_MAX_TEMP_F = "maxtempF";
-    private static final String KEY_MIN_TEMP_C = "mintempC";
-    private static final String KEY_MIN_TEMP_F = "mintempF";
-    private static final String KEY_UV_INDEX = "uvIndex";
+    public static final String KEY_DATA = "data";
 
     private CurrentCondition mCurCondition;
-    private AstronomicalForecast mAstrForecast;
-    private List<HourlyForecast> mHourlyForecastList;
-    private Date mDate;
-    private Integer mMaxTempC;
-    private Integer mMaxTempF;
-    private Integer mMinTempC;
-    private Integer mMinTempF;
-    private Integer mUVIndex;
+    private List<DailyForecast> mDailyForecastList;
 
-    public WeatherData(JSONObject jsonDefinition) {
-        mHourlyForecastList = new ArrayList<>();
+    public WeatherData() {
+        mDailyForecastList = new ArrayList<>();
     }
 
     public void setCondition(CurrentCondition condition) {
@@ -42,23 +25,15 @@ public class WeatherData extends JSONParser {
         return mCurCondition;
     }
 
-    public void setAstrForecast(AstronomicalForecast forecast) {
-        mAstrForecast = forecast;
-    }
-
-    public AstronomicalForecast getAstrForecast() {
-        return mAstrForecast;
-    }
-
     public void clearForecast() {
-        mHourlyForecastList.clear();
+        mDailyForecastList.clear();
     }
 
-    public void addForecast(HourlyForecast forecast) {
-        mHourlyForecastList.add(forecast);
+    public void addForecast(DailyForecast forecast) {
+        mDailyForecastList.add(forecast);
     }
 
-    public List<HourlyForecast> getForecast() {
-        return mHourlyForecastList;
+    public List<DailyForecast> getForecast() {
+        return mDailyForecastList;
     }
 }
