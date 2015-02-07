@@ -1,0 +1,12 @@
+<resources>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+
+    <dimen name="menu_text">22sp</dimen>
+    
+    <dimen name="big_padding">32dp</dimen>
+    <dimen name="padding">16dp</dimen>
+    <dimen name="medium_padding">8dp</dimen>
+    <dimen name="small_padding">4dp</dimen>
+
+    <dimen name="drawer_width">300dp</dimen>
+</resources>

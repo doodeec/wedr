@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="length_unit"
+        android:title="@string/pref_length_unit_label"
+        android:defaultValue="Meters"
+        android:entries="@array/pref_length_unit_values"
+        android:entryValues="@array/pref_length_unit_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    
+    <ListPreference
+        android:key="temperature_unit"
+        android:title="@string/pref_temp_unit_label"
+        android:defaultValue="Celsius"
+        android:entries="@array/pref_temp_unit_values"
+        android:entryValues="@array/pref_temp_unit_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+</PreferenceScreen>
