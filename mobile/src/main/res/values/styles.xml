@@ -1,9 +1,9 @@
 <resources>
 
     <style name="WedrTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/lightBlue</item>
-        <item name="colorPrimaryDark">@color/darkBlue</item>
-        <item name="colorAccent">@color/darkBlue</item>
+        <item name="colorPrimary">@color/light_blue</item>
+        <item name="colorPrimaryDark">@color/dark_blue</item>
+        <item name="colorAccent">@color/dark_blue</item>
     </style>
 
 </resources>

@@ -20,7 +20,7 @@
         android:layout_marginLeft="@dimen/big_padding"
         android:text="Menu item"
         android:textSize="@dimen/menu_text"
-        android:textColor="@color/darkGrey"
+        android:textColor="@color/dark_grey"
         android:layout_toRightOf="@id/menu_item_icon"/>
 
 </RelativeLayout>

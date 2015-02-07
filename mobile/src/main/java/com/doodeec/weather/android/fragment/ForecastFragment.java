@@ -11,6 +11,8 @@ import com.doodeec.weather.android.R;
 
 public class ForecastFragment extends Fragment {
 
+    public static final String FORECAST_FRG_TAG = "forecastFragment";
+    
     private OnForecastInteractionListener mListener;
 
     public static ForecastFragment newInstance() {

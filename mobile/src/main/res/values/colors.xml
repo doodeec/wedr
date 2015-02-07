@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="lightBlue">#7fa5e3</color>
-    <color name="darkBlue">#6684b6</color>
+    <color name="light_grey">#ddd</color>
+    <color name="light_blue">#7fa5e3</color>
+    <color name="dark_blue">#6684b6</color>
     <color name="yellow">#fcee21</color>
-    <color name="darkGrey">#333</color>
+    <color name="dark_grey">#333</color>
+    <color name="grey">#404040</color>
+    <color name="lighter_grey">#48414f</color>
+
+    <color name="forecast_day">@color/dark_grey</color>
+    <color name="forecast_condition">@color/lighter_grey</color>
+    <color name="forecast_temp">@color/grey</color>
+
+    <color name="today_location">@color/grey</color>
+    <color name="today_weather">@color/dark_grey</color>
+    <color name="today_separator">@color/light_grey</color>
+    <color name="today_info">@color/grey</color>
 </resources>

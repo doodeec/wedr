@@ -1,5 +1,6 @@
 package com.doodeec.weather.android.activity;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -15,8 +16,9 @@ import com.doodeec.weather.android.geoloc.LocationService;
 public class TodayActivity extends BaseDrawerActivity implements TodayFragment.OnTodayInteractionListener,
         LocationService.OnLocationRetrievedListener {
 
-    CancellableServerRequest mLoadWeatherRequest;
-    TodayFragment mTodayFragment;
+    private CancellableServerRequest mLoadWeatherRequest;
+    private CancellableServerRequest mLoadIconRequest;
+    private TodayFragment mTodayFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,7 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
     protected void onResume() {
         super.onResume();
         mTodayFragment = (TodayFragment) getSupportFragmentManager().findFragmentByTag(TodayFragment.TODAY_FRG_TAG);
-        
+
         LocationService.requestLocation(this);
     }
 
@@ -51,6 +53,7 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                     public void onSuccess(WeatherData weatherData) {
                         mTodayFragment.updateData(weatherData);
                         mLoadWeatherRequest = null;
+                        loadWeatherIcon(weatherData);
                     }
 
                     @Override
@@ -75,7 +78,49 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
         // stop loading request if activity is paused
         if (mLoadWeatherRequest != null) {
             mLoadWeatherRequest.cancel(true);
+            mLoadWeatherRequest = null;
+        }
+        if (mLoadIconRequest != null) {
+            mLoadIconRequest.cancel(true);
+            mLoadIconRequest = null;
         }
         super.onPause();
+    }
+
+    /**
+     * Loads weather icon asynchronously from server
+     *
+     * @param weatherData data
+     */
+    private void loadWeatherIcon(WeatherData weatherData) {
+        if (weatherData != null && weatherData.getCondition() != null &&
+                weatherData.getCondition().getIconURL() != null) {
+            mLoadIconRequest = APIService.loadWeatherIcon(weatherData.getCondition().getIconURL(),
+                    new BaseRequestListener<Bitmap>() {
+                        @Override
+                        public void onError(RequestError error) {
+                            //TODO show this?
+                            Toast.makeText(TodayActivity.this, "Error loading weather icon", Toast.LENGTH_SHORT).show();
+                            mLoadIconRequest = null;
+                        }
+
+                        @Override
+                        public void onSuccess(Bitmap icon) {
+                            if (mTodayFragment.isAdded()) {
+                                mTodayFragment.updateIcon(icon);
+                            }
+                            mLoadIconRequest = null;
+                        }
+
+                        @Override
+                        public void onCancelled() {
+                            mLoadIconRequest = null;
+                        }
+
+                        @Override
+                        public void onProgress(Integer progress) {
+                        }
+                    });
+        }
     }
 }

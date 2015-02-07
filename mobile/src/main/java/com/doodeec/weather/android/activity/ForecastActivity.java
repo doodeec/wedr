@@ -13,7 +13,7 @@ public class ForecastActivity extends BaseDrawerActivity implements ForecastFrag
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, ForecastFragment.newInstance())
+                    .add(R.id.container, ForecastFragment.newInstance(), ForecastFragment.FORECAST_FRG_TAG)
                     .commit();
         }
     }

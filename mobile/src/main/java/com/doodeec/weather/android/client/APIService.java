@@ -1,15 +1,18 @@
 package com.doodeec.weather.android.client;
 
+import android.graphics.Bitmap;
+
 import com.doodeec.scom.BaseServerRequest;
 import com.doodeec.scom.CancellableServerRequest;
+import com.doodeec.scom.ImageServerRequest;
 import com.doodeec.scom.RequestError;
 import com.doodeec.scom.ServerRequest;
 import com.doodeec.scom.listener.BaseRequestListener;
 import com.doodeec.scom.listener.JSONRequestListener;
 import com.doodeec.weather.android.WedrConfig;
+import com.doodeec.weather.android.cache.ImageCache;
 import com.doodeec.weather.android.client.data.WeatherData;
 import com.doodeec.weather.android.client.parser.WeatherDataParser;
-import com.doodeec.weather.android.util.WedrLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,8 +44,6 @@ public class APIService {
         ServerRequest request = new ServerRequest(BaseServerRequest.RequestType.GET, new JSONRequestListener() {
             @Override
             public void onSuccess(JSONObject object) {
-                WedrLog.d("Success getting weather object");
-
                 try {
                     listener.onSuccess(WeatherDataParser.parseWeatherData(object));
                 } catch (JSONException e) {
@@ -52,24 +53,55 @@ public class APIService {
 
             @Override
             public void onError(RequestError requestError) {
-                WedrLog.e("Error getting weather object");
                 listener.onError(requestError);
             }
 
             @Override
             public void onCancelled() {
-                WedrLog.w("Request cancelled");
                 listener.onCancelled();
             }
 
             @Override
             public void onProgress(Integer progress) {
-                WedrLog.d("Getting weather: " + progress + "%");
                 listener.onProgress(progress);
             }
         });
         request.executeInParallel(url);
 
+        return request;
+    }
+
+    public static CancellableServerRequest loadWeatherIcon(final String url, final BaseRequestListener<Bitmap> listener) {
+        Bitmap cachedImage = ImageCache.getBitmapFromCache(url); 
+        if (cachedImage != null) {
+            listener.onSuccess(cachedImage);
+            return null;
+        }
+        
+        ImageServerRequest request = new ImageServerRequest(BaseServerRequest.RequestType.GET, new BaseRequestListener<Bitmap>() {
+            @Override
+            public void onError(RequestError error) {
+                listener.onError(error);
+            }
+
+            @Override
+            public void onSuccess(Bitmap response) {
+                ImageCache.addBitmapToCache(url, response);
+                listener.onSuccess(response);
+            }
+
+            @Override
+            public void onCancelled() {
+                listener.onCancelled();
+            }
+
+            @Override
+            public void onProgress(Integer progress) {
+                listener.onProgress(progress);
+            }
+        });
+        request.executeInParallel(url);
+        
         return request;
     }
 }

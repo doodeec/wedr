@@ -1,12 +1,8 @@
 package com.doodeec.weather.android.client.data;
 
-import com.doodeec.weather.android.util.WedrLog;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 
 /**
@@ -51,7 +47,8 @@ public class CurrentCondition extends JSONParser {
     private Integer mVisibilityKm;
     private Integer mVisibilityMi;
     private String mWeatherDescription;
-    private URL mWeatherIconUrl;
+//    private URL mWeatherIconUrl;
+    private String mWeatherIconUrl;
     private Integer mWeatherCode;
     private WindDirection mWindDir;
     private Integer mWindDirDegree;
@@ -91,10 +88,14 @@ public class CurrentCondition extends JSONParser {
         //TODO get date
 //        mObservationDate = getInt(jsonDefinition, KEY_WIND_SPEED_MI);
 
-        try {
+        /*try {
             mWeatherIconUrl = new URL(getString(jsonDefinition, KEY_WEATHER_ICON, ""));
         } catch (MalformedURLException e) {
             WedrLog.e(e.getMessage());
+        }*/
+        if (jsonDefinition.has(KEY_WEATHER_ICON)) {
+            JSONObject iconObject = jsonDefinition.getJSONArray(KEY_WEATHER_ICON).getJSONObject(0);
+            mWeatherIconUrl = getString(iconObject, KEY_VALUE);
         }
     }
 
@@ -170,7 +171,11 @@ public class CurrentCondition extends JSONParser {
         return mWindSpeedMi;
     }
 
-    public URL getIconURL() {
+    /*public URL getIconURL() {
+        return mWeatherIconUrl;
+    }*/
+
+    public String getIconURL() {
         return mWeatherIconUrl;
     }
 }
