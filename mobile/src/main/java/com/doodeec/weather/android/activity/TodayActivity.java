@@ -10,8 +10,10 @@ import com.doodeec.weather.android.R;
 import com.doodeec.weather.android.client.APIService;
 import com.doodeec.weather.android.client.data.WeatherData;
 import com.doodeec.weather.android.fragment.TodayFragment;
+import com.doodeec.weather.android.geoloc.LocationService;
 
-public class TodayActivity extends BaseDrawerActivity implements TodayFragment.OnTodayInteractionListener {
+public class TodayActivity extends BaseDrawerActivity implements TodayFragment.OnTodayInteractionListener,
+        LocationService.OnLocationRetrievedListener {
 
     CancellableServerRequest mLoadWeatherRequest;
     TodayFragment mTodayFragment;
@@ -30,32 +32,42 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
     @Override
     protected void onResume() {
         super.onResume();
-        
         mTodayFragment = (TodayFragment) getSupportFragmentManager().findFragmentByTag(TodayFragment.TODAY_FRG_TAG);
+        
+        LocationService.requestLocation(this);
+    }
 
-        mLoadWeatherRequest = APIService.loadWeatherForLocation(48.9533934, 18.2092358, new BaseRequestListener<WeatherData>() {
-            @Override
-            public void onError(RequestError requestError) {
-                Toast.makeText(TodayActivity.this, "Error loading data", Toast.LENGTH_SHORT).show();
-                mLoadWeatherRequest = null;
-            }
+    @Override
+    public void onLocation(double latitude, double longitude) {
+        mLoadWeatherRequest = APIService.loadWeatherForLocation(latitude, longitude,
+                new BaseRequestListener<WeatherData>() {
+                    @Override
+                    public void onError(RequestError requestError) {
+                        Toast.makeText(TodayActivity.this, "Error loading data", Toast.LENGTH_SHORT).show();
+                        mLoadWeatherRequest = null;
+                    }
 
-            @Override
-            public void onSuccess(WeatherData weatherData) {
-                mTodayFragment.updateData(weatherData);
-                mLoadWeatherRequest = null;
-            }
+                    @Override
+                    public void onSuccess(WeatherData weatherData) {
+                        mTodayFragment.updateData(weatherData);
+                        mLoadWeatherRequest = null;
+                    }
 
-            @Override
-            public void onCancelled() {
-                Toast.makeText(TodayActivity.this, "Data loading cancelled", Toast.LENGTH_SHORT).show();
-                mLoadWeatherRequest = null;
-            }
+                    @Override
+                    public void onCancelled() {
+                        Toast.makeText(TodayActivity.this, "Data loading cancelled", Toast.LENGTH_SHORT).show();
+                        mLoadWeatherRequest = null;
+                    }
 
-            @Override
-            public void onProgress(Integer integer) {
-            }
-        });
+                    @Override
+                    public void onProgress(Integer integer) {
+                    }
+                });
+    }
+
+    @Override
+    public void onLocationError() {
+        Toast.makeText(this, "Location unavailable", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -7,7 +7,7 @@ import com.doodeec.weather.android.WedrConfig;
  */
 public class WedrLog {
 
-    public static final String TAG = "EXAMPLE";
+    public static final String TAG = "WEDR";
 
     public static void d(String msg) {
         if (WedrConfig.ENABLE_LOGS) android.util.Log.d(TAG, msg);

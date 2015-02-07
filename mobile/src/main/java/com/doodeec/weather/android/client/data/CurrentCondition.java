@@ -2,6 +2,7 @@ package com.doodeec.weather.android.client.data;
 
 import com.doodeec.weather.android.util.WedrLog;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
@@ -65,7 +66,7 @@ public class CurrentCondition extends JSONParser {
      *
      * @param jsonDefinition json object
      */
-    public CurrentCondition(JSONObject jsonDefinition) {
+    public CurrentCondition(JSONObject jsonDefinition) throws JSONException {
         mCloudCover = getInt(jsonDefinition, KEY_CLOUD_COVER);
         mFeelTempC = getInt(jsonDefinition, KEY_FEELS_LIKE_C);
         mFeelTempF = getInt(jsonDefinition, KEY_FEELS_LIKE_F);
@@ -78,7 +79,10 @@ public class CurrentCondition extends JSONParser {
         mTempF = getInt(jsonDefinition, KEY_TEMP_F);
         mVisibilityKm = getInt(jsonDefinition, KEY_VISIBILITY_KM);
         mVisibilityMi = getInt(jsonDefinition, KEY_VISIBILITY_MI);
-        mWeatherDescription = getString(jsonDefinition, KEY_WEATHER_DESC, "");
+        if (jsonDefinition.has(KEY_WEATHER_DESC)) {
+            JSONObject descriptionObject = jsonDefinition.getJSONArray(KEY_WEATHER_DESC).getJSONObject(0);
+            mWeatherDescription = getString(descriptionObject, KEY_VALUE);
+        }
         mWeatherCode = getInt(jsonDefinition, KEY_WEATHER_CODE);
         mWindDir = WindDirection.forAbbreviation(getString(jsonDefinition, KEY_WIND_DIRECTION));
         mWindDirDegree = getInt(jsonDefinition, KEY_WIND_DIRECTION_DEG);

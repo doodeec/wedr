@@ -14,8 +14,9 @@ public abstract class JSONParser {
      * @param jsonObject json object
      * @param key        key to find
      * @return value if exists, null otherwise
+     * @throws JSONException
      */
-    protected Integer getInt(JSONObject jsonObject, String key) {
+    protected Integer getInt(JSONObject jsonObject, String key) throws JSONException {
         return getInt(jsonObject, key, null);
     }
 
@@ -26,15 +27,12 @@ public abstract class JSONParser {
      * @param key        key to find
      * @param fallback   fallback value
      * @return value if exists, fallback value otherwise
+     * @throws JSONException
      */
-    protected Integer getInt(JSONObject jsonObject, String key, Integer fallback) {
-        try {
-            if (jsonObject.has(key)) {
-                return jsonObject.getInt(key);
-            } else {
-                return fallback;
-            }
-        } catch (JSONException e) {
+    protected Integer getInt(JSONObject jsonObject, String key, Integer fallback) throws JSONException {
+        if (jsonObject.has(key)) {
+            return jsonObject.getInt(key);
+        } else {
             return fallback;
         }
     }
@@ -45,8 +43,9 @@ public abstract class JSONParser {
      * @param jsonObject json object
      * @param key        key to find
      * @return value if exists, null otherwise
+     * @throws JSONException
      */
-    protected String getString(JSONObject jsonObject, String key) {
+    protected String getString(JSONObject jsonObject, String key) throws JSONException {
         return getString(jsonObject, key, null);
     }
 
@@ -57,15 +56,12 @@ public abstract class JSONParser {
      * @param key        key to find
      * @param fallback   fallback value
      * @return value if exists, fallback value otherwise
+     * @throws JSONException
      */
-    protected String getString(JSONObject jsonObject, String key, String fallback) {
-        try {
-            if (jsonObject.has(key)) {
-                return jsonObject.getString(key);
-            } else {
-                return fallback;
-            }
-        } catch (JSONException e) {
+    protected String getString(JSONObject jsonObject, String key, String fallback) throws JSONException {
+        if (jsonObject.has(key)) {
+            return jsonObject.getString(key);
+        } else {
             return fallback;
         }
     }
@@ -76,8 +72,9 @@ public abstract class JSONParser {
      * @param jsonObject json object
      * @param key        key to find
      * @return value if exists, null otherwise
+     * @throws JSONException
      */
-    protected Double getDouble(JSONObject jsonObject, String key) {
+    protected Double getDouble(JSONObject jsonObject, String key) throws JSONException {
         return getDouble(jsonObject, key, null);
     }
 
@@ -88,15 +85,12 @@ public abstract class JSONParser {
      * @param key        key to find
      * @param fallback   fallback value
      * @return value if exists, fallback value otherwise
+     * @throws JSONException
      */
-    protected Double getDouble(JSONObject jsonObject, String key, Double fallback) {
-        try {
-            if (jsonObject.has(key)) {
-                return jsonObject.getDouble(key);
-            } else {
-                return fallback;
-            }
-        } catch (JSONException e) {
+    protected Double getDouble(JSONObject jsonObject, String key, Double fallback) throws JSONException {
+        if (jsonObject.has(key)) {
+            return jsonObject.getDouble(key);
+        } else {
             return fallback;
         }
     }

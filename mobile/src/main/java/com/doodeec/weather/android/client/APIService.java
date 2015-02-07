@@ -30,7 +30,7 @@ public class APIService {
      * 2. Integer - number of days to forecast
      * 3. and 4. Float - location Latitude (3.) and Longitude (4.)
      */
-    private static final String SERVER_URL_SKELETON = "http://api.worldweatheronline.com/free/v2/weather.ashx?key=%s&format=json&num_of_days=%d&q=%.7f,%.7f";
+    private static final String SERVER_URL_SKELETON = "http://api.worldweatheronline.com/free/v2/weather.ashx?key=%s&format=json&includeLocation=yes&num_of_days=%d&q=%.7f,%.7f";
 
     public static CancellableServerRequest loadWeatherForLocation(double latitude, double longitude, final BaseRequestListener<WeatherData> listener) {
         String url = String.format(SERVER_URL_SKELETON,

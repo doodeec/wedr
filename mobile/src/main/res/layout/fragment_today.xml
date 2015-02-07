@@ -9,8 +9,26 @@
                 tools:context="com.doodeec.weather.android.activity.TodayActivity$PlaceholderFragment">
 
     <TextView
-        android:text="@string/hello_world"
+        android:id="@+id/weather_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/weather_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/weather_temperature"/>
+
+    <TextView
+        android:id="@+id/location_region"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/weather_description"/>
+
+    <TextView
+        android:id="@+id/location_country"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/location_region"/>
 
 </RelativeLayout>

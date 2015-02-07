@@ -1,5 +1,6 @@
 package com.doodeec.weather.android.client.data;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -38,7 +39,7 @@ public class HourlyForecast extends JSONParser {
     private static final String KEY_SNOW_CHANCE = "chanceofsnow";
     private static final String KEY_THUNDER_CHANCE = "chanceofthunder";
     
-    public HourlyForecast(JSONObject jsonDefinition) {
+    public HourlyForecast(JSONObject jsonDefinition) throws JSONException {
         //TODO parse hourly forecast
     }
 }

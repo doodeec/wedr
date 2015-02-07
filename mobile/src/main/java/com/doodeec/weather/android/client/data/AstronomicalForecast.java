@@ -1,5 +1,6 @@
 package com.doodeec.weather.android.client.data;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -21,7 +22,7 @@ public class AstronomicalForecast extends JSONParser {
     private Date mSunRise;
     private Date mSunSet;
 
-    public AstronomicalForecast(JSONObject jsonDefinition) {
+    public AstronomicalForecast(JSONObject jsonDefinition) throws JSONException {
         //TODO dates
     }
 
