@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="@dimen/today_info_view_size"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/small_padding">
+
+    <ImageView
+        android:id="@+id/info_icon"
+        android:layout_width="@dimen/today_info_icon_size"
+        android:layout_height="@dimen/today_info_icon_size"
+        android:layout_margin="@dimen/small_padding"
+        android:layout_centerHorizontal="true"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/info_icon_description"
+        android:src="@drawable/ic_weather_direction"/>
+
+    <TextView
+        android:id="@+id/info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/info_icon"
+        android:textSize="@dimen/today_weather_info"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/today_info"
+        android:text="1019 hPa"/>
+
+</RelativeLayout>

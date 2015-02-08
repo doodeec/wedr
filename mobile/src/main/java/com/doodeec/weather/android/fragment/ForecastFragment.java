@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import com.doodeec.weather.android.R;
 import com.doodeec.weather.android.adapter.ForecastAdapter;
 import com.doodeec.weather.android.client.data.SessionData;
+import com.doodeec.weather.android.client.data.model.DailyForecast;
+import com.doodeec.weather.android.util.RecyclerViewItemClickListener;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -19,7 +21,7 @@ import java.util.Observer;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class ForecastFragment extends Fragment implements Observer {
+public class ForecastFragment extends Fragment implements Observer, RecyclerViewItemClickListener.OnItemClickListener {
 
     public static final String FORECAST_FRG_TAG = "forecastFragment";
 
@@ -58,10 +60,11 @@ public class ForecastFragment extends Fragment implements Observer {
         mForecastList.setHasFixedSize(true);
         mForecastList.setLayoutManager(new LinearLayoutManager(getActivity()));
         mForecastList.setAdapter(mForecastAdapter);
+        mForecastList.addOnItemTouchListener(new RecyclerViewItemClickListener(getActivity(), this));
 
         // initialize forecast data for the first time
         mForecastAdapter.updateForecastData(SessionData.getInstance().getWeatherData().getForecast());
-        
+
         return rootView;
     }
 
@@ -71,13 +74,23 @@ public class ForecastFragment extends Fragment implements Observer {
     }
 
     @Override
+    public void onItemClick(View view, int position) {
+        mListener.onDailyForecastClicked(mForecastAdapter.getItem(position));
+    }
+
+    @Override
+    public void onItemLongClick(View view, int position) {
+        // do nothing
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
             mListener = (OnForecastInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnForecastInteractionListener");
         }
 
         SessionData.getInstance().getWeatherData().addObserver(this);
@@ -91,6 +104,11 @@ public class ForecastFragment extends Fragment implements Observer {
     }
 
     public interface OnForecastInteractionListener {
-
+        /**
+         * Fired when item in forecast list is clicked
+         *
+         * @param dailyForecast daily forecast which was clicked
+         */
+        void onDailyForecastClicked(DailyForecast dailyForecast);
     }
 }

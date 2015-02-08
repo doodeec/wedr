@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white_semitransparent">#7fff</color>
+    <color name="grey_semitransparent">#1333</color>
     <color name="light_grey">#ddd</color>
     <color name="light_blue">#7fa5e3</color>
     <color name="dark_blue">#6684b6</color>

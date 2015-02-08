@@ -14,7 +14,8 @@ import com.doodeec.weather.android.client.data.WeatherData;
 import com.doodeec.weather.android.fragment.TodayFragment;
 import com.doodeec.weather.android.geoloc.LocationService;
 
-public class TodayActivity extends BaseDrawerActivity implements LocationService.OnLocationRetrievedListener {
+public class TodayActivity extends BaseDrawerActivity implements TodayFragment.OnTodayInteractionListener,
+        LocationService.OnLocationRetrievedListener {
 
     private CancellableServerRequest mLoadWeatherRequest;
     private CancellableServerRequest mLoadIconRequest;
@@ -28,6 +29,8 @@ public class TodayActivity extends BaseDrawerActivity implements LocationService
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, TodayFragment.newInstance(), TodayFragment.TODAY_FRG_TAG)
                     .commit();
+
+//            LocationService.requestLocation(this);
         }
     }
 
@@ -36,18 +39,21 @@ public class TodayActivity extends BaseDrawerActivity implements LocationService
         super.onResume();
         mTodayFragment = (TodayFragment) getSupportFragmentManager().findFragmentByTag(TodayFragment.TODAY_FRG_TAG);
 
-        mTodayFragment.showProgress(true);
         //TODO load last data
-        LocationService.requestLocation(this);
+        onRefreshInvoked();
     }
 
     @Override
     public void onLocation(double latitude, double longitude) {
+        //TODO refresh active
         mLoadWeatherRequest = APIService.loadWeatherForLocation(latitude, longitude,
                 new BaseRequestListener<WeatherData>() {
                     @Override
                     public void onError(RequestError requestError) {
                         Toast.makeText(TodayActivity.this, "Error loading data", Toast.LENGTH_SHORT).show();
+                        if (mTodayFragment.isAdded()) {
+                            mTodayFragment.showProgress(false);
+                        }
                         mLoadWeatherRequest = null;
                     }
 
@@ -66,6 +72,9 @@ public class TodayActivity extends BaseDrawerActivity implements LocationService
                     @Override
                     public void onCancelled() {
                         Toast.makeText(TodayActivity.this, "Data loading cancelled", Toast.LENGTH_SHORT).show();
+                        if (mTodayFragment.isAdded()) {
+                            mTodayFragment.showProgress(false);
+                        }
                         mLoadWeatherRequest = null;
                     }
 
@@ -92,6 +101,12 @@ public class TodayActivity extends BaseDrawerActivity implements LocationService
             mLoadIconRequest = null;
         }
         super.onPause();
+    }
+
+    @Override
+    public void onRefreshInvoked() {
+        mTodayFragment.showProgress(true);
+        LocationService.requestLocation(this);
     }
 
     /**

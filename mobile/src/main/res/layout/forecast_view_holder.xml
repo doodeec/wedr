@@ -4,7 +4,11 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:paddingLeft="@dimen/padding"
-              android:paddingTop="@dimen/padding">
+              android:paddingTop="@dimen/padding"
+              android:clickable="true"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:background="@drawable/selector_drawer_menu_item">
 
     <RelativeLayout
         android:id="@+id/forecast_icon"
@@ -13,13 +17,9 @@
         android:layout_marginBottom="@dimen/padding"
         android:layout_gravity="bottom">
 
-        <com.doodeec.weather.android.util.OvalImageView
-            android:id="@+id/weather_icon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:contentDescription="@string/condition_icon_description"
-            android:background="@drawable/shape_circle"/>
+        <include
+            layout="@layout/forecast_icon"
+            android:id="@+id/weather_icon"/>
     </RelativeLayout>
 
     <RelativeLayout

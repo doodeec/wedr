@@ -92,4 +92,8 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastViewHolder> {
     public int getItemCount() {
         return mForecastData.size();
     }
+
+    public DailyForecast getItem(int position) {
+        return mForecastData.get(position);
+    }
 }

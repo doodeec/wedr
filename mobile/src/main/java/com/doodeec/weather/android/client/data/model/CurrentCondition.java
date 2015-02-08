@@ -177,11 +177,11 @@ public class CurrentCondition extends JSONParser implements IDatabaseSavable {
 
     @Override
     public String getPrimaryColumnName() {
-        return null;
+        return SimpleConditionDBEntry.COL_DATE;
     }
 
     @Override
     public String getPrimaryColumnValue() {
-        return null;
+        return String.valueOf(mTimestamp);
     }
 }

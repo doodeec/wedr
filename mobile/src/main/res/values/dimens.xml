@@ -16,6 +16,8 @@
 
     <!--today-->
     <dimen name="today_icon_size">80dp</dimen>
+    <dimen name="today_info_view_size">110dp</dimen>
+    <dimen name="today_info_icon_size">22dp</dimen>
     <dimen name="today_separator_width">100dp</dimen>
     <dimen name="today_location_text">24sp</dimen>
     <dimen name="today_weather_text">33sp</dimen>

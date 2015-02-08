@@ -1,10 +1,12 @@
 package com.doodeec.weather.android.fragment;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import com.doodeec.weather.android.client.data.WeatherData;
 import com.doodeec.weather.android.client.data.model.NearestLocation;
 import com.doodeec.weather.android.util.OvalImageView;
 import com.doodeec.weather.android.util.WedrPreferences;
+import com.doodeec.weather.android.view.WeatherInfoView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -28,6 +31,9 @@ public class TodayFragment extends Fragment {
     public static final String TODAY_FRG_TAG = "todayFragment";
     private static final String LOC_FORMAT = "%s, %s";
 
+    private OnTodayInteractionListener mListener;
+    @InjectView(R.id.refresh_weather)
+    SwipeRefreshLayout mRefreshLayout;
     @InjectView(R.id.today_weather_icon)
     ImageView mWeatherIcon;
     @InjectView(R.id.weather_temperature)
@@ -38,6 +44,22 @@ public class TodayFragment extends Fragment {
     TextView mLocRegionCountry;
     @InjectView(R.id.weather_progressbar)
     RelativeLayout mProgressBar;
+    @InjectView(R.id.info_humidity)
+    WeatherInfoView mHumidityInfo;
+    @InjectView(R.id.info_precipitation)
+    WeatherInfoView mPrecipitationInfo;
+    @InjectView(R.id.info_pressure)
+    WeatherInfoView mPressureInfo;
+    @InjectView(R.id.info_wind_speed)
+    WeatherInfoView mWindSpeedInfo;
+    @InjectView(R.id.info_wind_direction)
+    WeatherInfoView mWindDirectionInfo;
+    final SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            mListener.onRefreshInvoked();
+        }
+    };
 
     public static TodayFragment newInstance() {
         TodayFragment fragment = new TodayFragment();
@@ -61,11 +83,43 @@ public class TodayFragment extends Fragment {
         ButterKnife.inject(this, rootView);
 
         if (mWeatherTemp == null || mWeatherDesc == null || mLocRegionCountry == null ||
-                mWeatherIcon == null || mProgressBar == null) {
+                mWeatherIcon == null || mProgressBar == null || mHumidityInfo == null ||
+                mPrecipitationInfo == null || mPressureInfo == null || mWindSpeedInfo == null ||
+                mWindDirectionInfo == null || mRefreshLayout == null) {
             throw new AssertionError("Today fragment has invalid layout");
         }
 
+        mRefreshLayout.setOnRefreshListener(mRefreshListener);
+
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        mRefreshLayout.setOnRefreshListener(null);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnTodayInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnForecastInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public void setRefreshing(boolean isRefreshing) {
+        mRefreshLayout.setOnRefreshListener(isRefreshing ? null : mRefreshListener);
+        mRefreshLayout.setRefreshing(isRefreshing);
     }
 
     /**
@@ -83,6 +137,7 @@ public class TodayFragment extends Fragment {
 
         mWeatherDesc.setText(weatherData.getCondition().getWeatherDescription());
 
+        // set location
         NearestLocation nearestLocation = weatherData.getNearestLocation();
         if (nearestLocation != null) {
             if (nearestLocation.getRegion() != null) {
@@ -93,6 +148,29 @@ public class TodayFragment extends Fragment {
                 // some places does not provide region
                 mLocRegionCountry.setText(weatherData.getNearestLocation().getCountry());
             }
+        }
+
+        // set info
+        mHumidityInfo.setText(String.format(WedrConfig.HUMIDITY_FORMAT, weatherData.getCondition().getHumidity()));
+        mPressureInfo.setText(String.format(WedrConfig.PRESSURE_FORMAT, weatherData.getCondition().getPressure()));
+        mWindDirectionInfo.setText(weatherData.getCondition().getWindDirection().getAbbreviation());
+
+        if (WedrPreferences.getLengthUnit().equals(WedrPreferences.LengthUnit.Mile)) {
+            mWindSpeedInfo.setText(String.format(WedrConfig.WIND_SPEED_FORMAT_MI,
+                    weatherData.getCondition().getWindSpeedMi()));
+        } else {
+            mWindSpeedInfo.setText(String.format(WedrConfig.WIND_SPEED_FORMAT_KM,
+                    weatherData.getCondition().getWindSpeedKm()));
+        }
+
+        // precipInch can return null sometimes, in that case use MM as a fallback
+        if (WedrPreferences.getLengthUnit().equals(WedrPreferences.LengthUnit.Mile) &&
+                weatherData.getCondition().getPrecipInch() != null) {
+            mPrecipitationInfo.setText(String.format(WedrConfig.PRECIPITATION_FORMAT_IN,
+                    weatherData.getCondition().getPrecipInch()));
+        } else {
+            mPrecipitationInfo.setText(String.format(WedrConfig.PRECIPITATION_FORMAT_MM,
+                    (float) weatherData.getCondition().getPrecipMM()));
         }
     }
 
@@ -133,5 +211,12 @@ public class TodayFragment extends Fragment {
      */
     public void showProgress(boolean show) {
         mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    public interface OnTodayInteractionListener {
+        /**
+         * Fires when refresh layout is pulled down
+         */
+        void onRefreshInvoked();
     }
 }

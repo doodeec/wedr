@@ -27,4 +27,10 @@ public class WedrConfig {
      */
     public static final String TEMP_FORMAT_C = "%d°C";
     public static final String TEMP_FORMAT_F = "%dF";
+    public static final String HUMIDITY_FORMAT = "%.0f%%";
+    public static final String PRECIPITATION_FORMAT_MM = "%.1f mm";
+    public static final String PRECIPITATION_FORMAT_IN = "%.1f in";
+    public static final String PRESSURE_FORMAT = "%d hPa";
+    public static final String WIND_SPEED_FORMAT_KM = "%d km/h";
+    public static final String WIND_SPEED_FORMAT_MI = "%d mph";
 }
