@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.doodeec.weather.android.WedrApplication;
-import com.doodeec.weather.android.database.DBHelper;
+import com.doodeec.weather.android.database.DatabaseHelper;
 import com.doodeec.weather.android.database.model.IDatabaseSavable;
 import com.doodeec.weather.android.util.WedrLog;
 
@@ -40,7 +40,7 @@ public class SessionData {
         mWeatherData.getCondition().setTimestamp(System.currentTimeMillis());
 
         //TODO store some data in DB
-        SQLiteDatabase db = new DBHelper(WedrApplication.getContext()).getReadableDatabase();
+        SQLiteDatabase db = new DatabaseHelper(WedrApplication.getContext()).getReadableDatabase();
         try {
             db.beginTransaction();
             // store location
