@@ -1,9 +1,7 @@
-package com.doodeec.weather.android.client.data;
+package com.doodeec.weather.android.client.data.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Date;
 
 /**
  * @author Dusan Bartos
@@ -17,28 +15,31 @@ public class AstronomicalForecast extends JSONParser {
     private static final String KEY_SUNRISE = "sunrise";
     private static final String KEY_SUNSET = "sunset";
 
-    private Date mMoonRise;
-    private Date mMoonSet;
-    private Date mSunRise;
-    private Date mSunSet;
+    private String mMoonRise;
+    private String mMoonSet;
+    private String mSunRise;
+    private String mSunSet;
 
     public AstronomicalForecast(JSONObject jsonDefinition) throws JSONException {
-        //TODO dates
+        mMoonRise = getString(jsonDefinition, KEY_MOONRISE);
+        mMoonSet = getString(jsonDefinition, KEY_MOONSET);
+        mSunRise = getString(jsonDefinition, KEY_SUNRISE);
+        mSunSet = getString(jsonDefinition, KEY_SUNSET);
     }
 
-    public Date getMoonRise() {
+    public String getMoonRise() {
         return mMoonRise;
     }
 
-    public Date getMoonSet() {
+    public String getMoonSet() {
         return mMoonSet;
     }
 
-    public Date getSunRise() {
+    public String getSunRise() {
         return mSunRise;
     }
 
-    public Date getSunSet() {
+    public String getSunSet() {
         return mSunSet;
     }
 }

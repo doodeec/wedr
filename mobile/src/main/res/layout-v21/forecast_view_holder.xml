@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingLeft="@dimen/padding"
+              android:paddingTop="@dimen/padding">
+
+    <RelativeLayout
+        android:id="@+id/forecast_icon"
+        android:layout_width="@dimen/forecast_icon_size"
+        android:layout_height="@dimen/forecast_icon_size"
+        android:layout_marginBottom="@dimen/padding"
+        android:layout_gravity="bottom">
+
+        <ImageView
+            android:id="@+id/weather_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:contentDescription="@string/condition_icon_description"
+            android:background="@color/light_blue"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/padding">
+
+        <TextView
+            android:id="@+id/forecast_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding"
+            android:paddingRight="@dimen/padding"
+            android:text="Wednesday"
+            android:fontFamily="sans-serif-light"
+            android:textSize="@dimen/forecast_day"
+            android:textColor="@color/dark_grey"/>
+
+        <TextView
+            android:id="@+id/forecast_temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:text="22°C"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="@dimen/forecast_temp"
+            android:textColor="@color/dark_grey"
+            android:layout_alignLeft="@id/forecast_day"
+            android:layout_below="@id/forecast_day"/>
+
+        <TextView
+            android:id="@+id/forecast_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/big_padding"
+            android:paddingRight="@dimen/padding"
+            android:gravity="bottom"
+            android:singleLine="true"
+            android:text="Sunny sunny sunny sunnier"
+            android:fontFamily="sans-serif-light"
+            android:textSize="@dimen/forecast_condition"
+            android:textColor="@color/dark_grey"
+            android:layout_alignBottom="@id/forecast_temperature"
+            android:layout_toRightOf="@id/forecast_temperature"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_secondary_size"
+            android:layout_marginTop="@dimen/padding"
+            android:background="@color/light_grey"
+            android:layout_below="@id/forecast_temperature"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

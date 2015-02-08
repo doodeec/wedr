@@ -1,4 +1,4 @@
-package com.doodeec.weather.android.client.data;
+package com.doodeec.weather.android.client.data.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;

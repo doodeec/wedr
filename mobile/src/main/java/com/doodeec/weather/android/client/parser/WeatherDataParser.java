@@ -1,20 +1,22 @@
 package com.doodeec.weather.android.client.parser;
 
-import com.doodeec.weather.android.client.data.CurrentCondition;
-import com.doodeec.weather.android.client.data.DailyForecast;
-import com.doodeec.weather.android.client.data.NearestLocation;
+import com.doodeec.weather.android.client.data.model.CurrentCondition;
+import com.doodeec.weather.android.client.data.model.DailyForecast;
+import com.doodeec.weather.android.client.data.model.NearestLocation;
 import com.doodeec.weather.android.client.data.WeatherData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+
 /**
  * @author Dusan Bartos
  */
 public class WeatherDataParser {
 
-    public static WeatherData parseWeatherData(JSONObject objectDefinition) throws JSONException {
+    public static WeatherData parseWeatherData(JSONObject objectDefinition) throws JSONException, ParseException {
         WeatherData weatherData = new WeatherData();
 
         if (objectDefinition.has(WeatherData.KEY_DATA)) {
@@ -54,7 +56,7 @@ public class WeatherDataParser {
         return new CurrentCondition(conditionArray.getJSONObject(0));
     }
 
-    private static DailyForecast[] parseForecastData(JSONArray weatherArray) throws JSONException {
+    private static DailyForecast[] parseForecastData(JSONArray weatherArray) throws JSONException, ParseException {
         DailyForecast[] forecasts = new DailyForecast[weatherArray.length()];
         for (int i = 0; i < weatherArray.length(); i++) {
             forecasts[i] = new DailyForecast(weatherArray.getJSONObject(i));

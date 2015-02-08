@@ -17,6 +17,8 @@ import com.doodeec.weather.android.client.parser.WeatherDataParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+
 /**
  * Service for getting data from API server
  *
@@ -33,7 +35,7 @@ public class APIService {
      * 2. Integer - number of days to forecast
      * 3. and 4. Float - location Latitude (3.) and Longitude (4.)
      */
-    private static final String SERVER_URL_SKELETON = "http://api.worldweatheronline.com/free/v2/weather.ashx?key=%s&format=json&includeLocation=yes&num_of_days=%d&q=%.7f,%.7f";
+    private static final String SERVER_URL_SKELETON = "http://api.worldweatheronline.com/free/v2/weather.ashx?key=%s&format=json&includeLocation=yes&tp=24&num_of_days=%d&q=%.7f,%.7f";
 
     public static CancellableServerRequest loadWeatherForLocation(double latitude, double longitude, final BaseRequestListener<WeatherData> listener) {
         String url = String.format(SERVER_URL_SKELETON,
@@ -46,7 +48,7 @@ public class APIService {
             public void onSuccess(JSONObject object) {
                 try {
                     listener.onSuccess(WeatherDataParser.parseWeatherData(object));
-                } catch (JSONException e) {
+                } catch (JSONException | ParseException e) {
                     onError(new RequestError(e));
                 }
             }
@@ -72,12 +74,12 @@ public class APIService {
     }
 
     public static CancellableServerRequest loadWeatherIcon(final String url, final BaseRequestListener<Bitmap> listener) {
-        Bitmap cachedImage = ImageCache.getBitmapFromCache(url); 
+        Bitmap cachedImage = ImageCache.getBitmapFromCache(url);
         if (cachedImage != null) {
             listener.onSuccess(cachedImage);
             return null;
         }
-        
+
         ImageServerRequest request = new ImageServerRequest(BaseServerRequest.RequestType.GET, new BaseRequestListener<Bitmap>() {
             @Override
             public void onError(RequestError error) {
@@ -101,7 +103,7 @@ public class APIService {
             }
         });
         request.executeInParallel(url);
-        
+
         return request;
     }
 }

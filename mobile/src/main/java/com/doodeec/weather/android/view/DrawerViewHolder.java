@@ -1,4 +1,4 @@
-package com.doodeec.weather.android.activity.drawer;
+package com.doodeec.weather.android.view;
 
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;

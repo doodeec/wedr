@@ -9,6 +9,7 @@ import com.doodeec.scom.RequestError;
 import com.doodeec.scom.listener.BaseRequestListener;
 import com.doodeec.weather.android.R;
 import com.doodeec.weather.android.client.APIService;
+import com.doodeec.weather.android.client.data.SessionData;
 import com.doodeec.weather.android.client.data.WeatherData;
 import com.doodeec.weather.android.fragment.TodayFragment;
 import com.doodeec.weather.android.geoloc.LocationService;
@@ -51,6 +52,7 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
 
                     @Override
                     public void onSuccess(WeatherData weatherData) {
+                        SessionData.getInstance().setWeatherData(weatherData);
                         mTodayFragment.updateData(weatherData);
                         mLoadWeatherRequest = null;
                         loadWeatherIcon(weatherData);

@@ -1,5 +1,6 @@
 package com.doodeec.weather.android.activity;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -11,11 +12,10 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.doodeec.weather.android.R;
-import com.doodeec.weather.android.activity.drawer.DrawerAdapter;
 import com.doodeec.weather.android.activity.drawer.DrawerMenuItem;
+import com.doodeec.weather.android.adapter.DrawerAdapter;
 import com.doodeec.weather.android.dialog.AboutDialog;
 import com.doodeec.weather.android.util.RecyclerViewItemClickListener;
 
@@ -85,9 +85,20 @@ public abstract class BaseDrawerActivity extends ActionBarActivity implements Re
 
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(this, "Item clicked " + position, Toast.LENGTH_SHORT).show();
-        //TODO open activity
         hideDrawer();
+
+        // open new activity
+        switch (mDrawerAdapter.getItem(position).getTitleResource()) {
+            case R.string.drawer_today:
+                Intent todayIntent = new Intent(this, TodayActivity.class);
+                startActivity(todayIntent);
+                break;
+
+            case R.string.drawer_forecast:
+                Intent forecastIntent = new Intent(this, ForecastActivity.class);
+                startActivity(forecastIntent);
+                break;
+        }
     }
 
     @Override

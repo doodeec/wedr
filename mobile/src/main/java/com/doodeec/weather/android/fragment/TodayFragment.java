@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.doodeec.weather.android.R;
-import com.doodeec.weather.android.client.data.NearestLocation;
+import com.doodeec.weather.android.client.data.model.NearestLocation;
 import com.doodeec.weather.android.client.data.WeatherData;
 import com.doodeec.weather.android.util.OvalImageView;
 

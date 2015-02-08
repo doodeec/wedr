@@ -1,12 +1,17 @@
 package com.doodeec.weather.android.client.data;
 
+import com.doodeec.weather.android.client.data.model.CurrentCondition;
+import com.doodeec.weather.android.client.data.model.DailyForecast;
+import com.doodeec.weather.android.client.data.model.NearestLocation;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * @author Dusan Bartos
  */
-public class WeatherData extends JSONParser {
+public class WeatherData extends Observable {
 
     public static final String KEY_DATA = "data";
 
@@ -19,7 +24,11 @@ public class WeatherData extends JSONParser {
     }
 
     public void setNearestLocation(NearestLocation location) {
-        mNearestLocation = location;
+        if (mNearestLocation != location) {
+            mNearestLocation = location;
+            setChanged();
+            notifyObservers();
+        }
     }
 
     public NearestLocation getNearestLocation() {
@@ -27,7 +36,11 @@ public class WeatherData extends JSONParser {
     }
 
     public void setCondition(CurrentCondition condition) {
-        mCurCondition = condition;
+        if (mCurCondition != condition) {
+            mCurCondition = condition;
+            setChanged();
+            notifyObservers();
+        }
     }
 
     public CurrentCondition getCondition() {
@@ -35,11 +48,17 @@ public class WeatherData extends JSONParser {
     }
 
     public void clearForecast() {
-        mDailyForecastList.clear();
+        if (mDailyForecastList.size() != 0) {
+            mDailyForecastList.clear();
+            setChanged();
+            notifyObservers();
+        }
     }
 
     public void addForecast(DailyForecast forecast) {
         mDailyForecastList.add(forecast);
+        setChanged();
+        notifyObservers();
     }
 
     public List<DailyForecast> getForecast() {

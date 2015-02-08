@@ -1,9 +1,11 @@
-package com.doodeec.weather.android.client.data;
+package com.doodeec.weather.android.client.data.model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,8 +33,10 @@ public class DailyForecast extends JSONParser {
     private List<HourlyForecast> mHourlyForecastList;
     private AstronomicalForecast mAstrForecast;
 
-    public DailyForecast(JSONObject jsonDefinition) throws JSONException {
-        //TODO get date
+    public DailyForecast(JSONObject jsonDefinition) throws JSONException, ParseException {
+        SimpleDateFormat inFormat = new SimpleDateFormat("yyyy-MM-dd");
+        mDate = inFormat.parse(getString(jsonDefinition, KEY_DATE));
+
         mMaxTempC = getInt(jsonDefinition, KEY_MAX_TEMP_C);
         mMaxTempF = getInt(jsonDefinition, KEY_MAX_TEMP_F);
         mMinTempC = getInt(jsonDefinition, KEY_MIN_TEMP_C);
@@ -55,6 +59,11 @@ public class DailyForecast extends JSONParser {
 
     public Date getDate() {
         return mDate;
+    }
+
+    public String getDayOfWeek() {
+        SimpleDateFormat outFormat = new SimpleDateFormat("EEEE");
+        return outFormat.format(mDate);
     }
 
     public Integer getMaxTempC() {
