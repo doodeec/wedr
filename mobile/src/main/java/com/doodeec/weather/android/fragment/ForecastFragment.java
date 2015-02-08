@@ -103,6 +103,12 @@ public class ForecastFragment extends Fragment implements Observer, RecyclerView
         mListener = null;
     }
 
+    /**
+     * Interface for interacting with fragment
+     * Callbacks are invoked in parent activity
+     *
+     * @see com.doodeec.weather.android.activity.ForecastActivity
+     */
     public interface OnForecastInteractionListener {
         /**
          * Fired when item in forecast list is clicked

@@ -13,6 +13,9 @@
     <string name="condition_icon_description">Current condition icon</string>
     <string name="info_icon_description">Current condition info</string>
 
+    <!--Forecast activity-->
+    <string name="forecast_detail_click">Daily forecast clicked</string>
+
     <!--Action bar-->
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>

@@ -12,8 +12,6 @@ import android.preference.PreferenceManager;
  */
 public class WedrApplication extends Application {
 
-    private static final String WEDR_PREFERENCES_KEY = "wedrPreferences";
-
     private static WedrApplication mInstance;
 
     public WedrApplication() {

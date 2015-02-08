@@ -69,7 +69,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastViewHolder> {
             APIService.loadWeatherIcon(iconUrl, new BaseRequestListener<Bitmap>() {
                 @Override
                 public void onError(RequestError error) {
-                    WedrLog.e("Error loading weather icon");
+                    WedrLog.e("Error loading weather icon " + error.getMessage());
                 }
 
                 @Override

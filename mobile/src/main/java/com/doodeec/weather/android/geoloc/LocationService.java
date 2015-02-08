@@ -11,12 +11,19 @@ import com.doodeec.weather.android.WedrApplication;
 import com.doodeec.weather.android.util.WedrLog;
 
 /**
+ * Location service provides method for requesting a device location
+ *
  * @author Dusan Bartos
  */
 public class LocationService {
 
     private static OnLocationRetrievedListener sListener;
 
+    /**
+     * Requests single location report
+     *
+     * @param listener location request listener
+     */
     public static void requestLocation(OnLocationRetrievedListener listener) {
         // request without listener is useless
         if (listener == null) return;
@@ -48,17 +55,17 @@ public class LocationService {
 
                         @Override
                         public void onStatusChanged(String provider, int status, Bundle extras) {
-                            WedrLog.d("Status changed");
+                            WedrLog.d("Location status changed");
                         }
 
                         @Override
                         public void onProviderEnabled(String provider) {
-                            WedrLog.d("Provider enabled");
+                            WedrLog.d("Location provider enabled");
                         }
 
                         @Override
                         public void onProviderDisabled(String provider) {
-                            WedrLog.d("Provider disabled");
+                            WedrLog.w("Location provider disabled");
                         }
                     }, null);
         } else {
@@ -68,9 +75,21 @@ public class LocationService {
         }
     }
 
+    /**
+     * Listener for location request
+     */
     public interface OnLocationRetrievedListener {
+        /**
+         * Fires when location is retrieved
+         *
+         * @param latitude  location latitude
+         * @param longitude location longitude
+         */
         void onLocation(double latitude, double longitude);
 
+        /**
+         * Fires when neither GPS not network location provider is available
+         */
         void onLocationError();
     }
 }

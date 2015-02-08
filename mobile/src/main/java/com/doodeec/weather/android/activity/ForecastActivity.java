@@ -22,6 +22,6 @@ public class ForecastActivity extends BaseDrawerActivity implements ForecastFrag
 
     @Override
     public void onDailyForecastClicked(DailyForecast dailyForecast) {
-        Toast.makeText(this, "Daily forecast clicked", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.forecast_detail_click, Toast.LENGTH_SHORT).show();
     }
 }

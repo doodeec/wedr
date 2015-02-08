@@ -9,21 +9,30 @@ import android.widget.TextView;
 
 import com.doodeec.weather.android.R;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Drawer view holder provides recyclable view holder according viewHolder pattern to custom drawer items
  *
  * @author Dusan Bartos
  */
-public class DrawerViewHolder extends RecyclerView.ViewHolder {
+public class DrawerMenuItemViewHolder extends RecyclerView.ViewHolder {
 
+    @InjectView(R.id.menu_item_icon)
     TextView mItemName;
+    @InjectView(R.id.menu_item_label)
     ImageView mItemIcon;
 
-    public DrawerViewHolder(View v) {
+    public DrawerMenuItemViewHolder(View v) {
         super(v);
 
-        mItemIcon = (ImageView) v.findViewById(R.id.menu_item_icon);
-        mItemName = (TextView) v.findViewById(R.id.menu_item_label);
+        ButterKnife.inject(this, v);
+        
+        if (mItemIcon == null || mItemName == null) {
+            throw new AssertionError("Drawer menu item view holder has invalid layout");
+            
+        }
     }
 
     public void setLabel(@StringRes int labelRes) {

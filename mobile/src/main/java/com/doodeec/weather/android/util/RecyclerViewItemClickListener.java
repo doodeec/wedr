@@ -14,26 +14,8 @@ import android.view.View;
 public class RecyclerViewItemClickListener implements RecyclerView.OnItemTouchListener {
     private OnItemClickListener mListener;
 
-    public interface OnItemClickListener {
-        /**
-         * Fires when recycler view receives a single tap event on any item
-         *
-         * @param view     tapped view
-         * @param position item position in the list
-         */
-        public void onItemClick(View view, int position);
-
-        /**
-         * Fires when recycler view receives a long tap event on item
-         *
-         * @param view     long tapped view
-         * @param position item position in the list
-         */
-        public void onItemLongClick(View view, int position);
-    }
-
-    GestureDetector mGestureDetector;
-    ExtendedGestureListener mGestureListener;
+    private GestureDetector mGestureDetector;
+    private ExtendedGestureListener mGestureListener;
 
     public RecyclerViewItemClickListener(Context context, OnItemClickListener listener) {
         mListener = listener;
@@ -77,5 +59,23 @@ public class RecyclerViewItemClickListener implements RecyclerView.OnItemTouchLi
         public void onLongPress(MotionEvent e) {
             mListener.onItemLongClick(view, position);
         }
+    }
+
+    public interface OnItemClickListener {
+        /**
+         * Fires when recycler view receives a single tap event on any item
+         *
+         * @param view     tapped view
+         * @param position item position in the list
+         */
+        public void onItemClick(View view, int position);
+
+        /**
+         * Fires when recycler view receives a long tap event on item
+         *
+         * @param view     long tapped view
+         * @param position item position in the list
+         */
+        public void onItemLongClick(View view, int position);
     }
 }

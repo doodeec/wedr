@@ -2,7 +2,6 @@ package com.doodeec.weather.android.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -29,16 +28,11 @@ public class AboutDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // clicking OK automatically dismisses dialog, no need for listener
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.about_title)
                 .setMessage(R.string.about_message)
-                .setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // dismiss dialog only
-                            }
-                        }
-                )
+                .setPositiveButton(android.R.string.ok, null)
                 .create();
     }
 }

@@ -15,7 +15,8 @@ import android.widget.ImageView;
  * @author Dusan Bartos
  */
 public class OvalImageView extends ImageView {
-    private int radius = 10;
+    private int mRadius = 10;
+    private Path mClipPath;
 
     public OvalImageView(Context context) {
         this(context, null);
@@ -30,17 +31,19 @@ public class OvalImageView extends ImageView {
     }
 
     @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        mClipPath = new Path();
+        mClipPath.addRoundRect(new RectF(0, 0, w, h), mRadius, mRadius, Path.Direction.CW);
+    }
+
+    @Override
     protected void onDraw(@NonNull Canvas canvas) {
-        Path clipPath = new Path();
-        int w = this.getWidth();
-        int h = this.getHeight();
-        clipPath.addRoundRect(new RectF(0, 0, w, h), radius, radius, Path.Direction.CW);
-        canvas.clipPath(clipPath);
+        canvas.clipPath(mClipPath);
         super.onDraw(canvas);
     }
 
     public void setRadius(int radius) {
-        this.radius = radius;
+        this.mRadius = radius;
         this.invalidate();
     }
 }

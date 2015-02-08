@@ -9,7 +9,10 @@ import com.doodeec.weather.android.R;
 import com.doodeec.weather.android.util.WedrPreferences;
 
 /**
- * @author Dusan Bartos 
+ * Settings fragment
+ * used to setup units to display in application - temperature and length/speed units
+ *
+ * @author Dusan Bartos
  */
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -24,7 +27,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         fragment.setArguments(args);
         return fragment;
     }
-    
+
     @Override
     public void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);

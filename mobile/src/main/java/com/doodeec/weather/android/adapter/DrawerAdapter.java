@@ -7,15 +7,17 @@ import android.view.ViewGroup;
 
 import com.doodeec.weather.android.R;
 import com.doodeec.weather.android.activity.drawer.DrawerMenuItem;
-import com.doodeec.weather.android.view.DrawerViewHolder;
+import com.doodeec.weather.android.view.DrawerMenuItemViewHolder;
 
 /**
+ * Adapter for drawer menu items
+ *
  * @author Dusan Bartos
  */
-public class DrawerAdapter extends RecyclerView.Adapter<DrawerViewHolder> {
+public class DrawerAdapter extends RecyclerView.Adapter<DrawerMenuItemViewHolder> {
 
-    DrawerMenuItem[] mMenuItems;
-    LayoutInflater mInflater;
+    private DrawerMenuItem[] mMenuItems;
+    private LayoutInflater mInflater;
 
     public DrawerAdapter(Context context, DrawerMenuItem[] items) {
         mInflater = LayoutInflater.from(context);
@@ -27,12 +29,12 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerViewHolder> {
     }
 
     @Override
-    public DrawerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new DrawerViewHolder(mInflater.inflate(R.layout.drawer_item_view_holder, parent, false));
+    public DrawerMenuItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new DrawerMenuItemViewHolder(mInflater.inflate(R.layout.drawer_item_view_holder, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(DrawerViewHolder holder, int position) {
+    public void onBindViewHolder(DrawerMenuItemViewHolder holder, int position) {
         DrawerMenuItem menuItem = mMenuItems[position];
 
         holder.setIcon(menuItem.getIconResource());
@@ -43,7 +45,7 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerViewHolder> {
     public int getItemCount() {
         return mMenuItems.length;
     }
-    
+
     public DrawerMenuItem getItem(int position) {
         return mMenuItems[position];
     }

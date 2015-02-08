@@ -54,7 +54,7 @@ public class TodayFragment extends Fragment {
     WeatherInfoView mWindSpeedInfo;
     @InjectView(R.id.info_wind_direction)
     WeatherInfoView mWindDirectionInfo;
-    final SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+    private final SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
             mListener.onRefreshInvoked();
