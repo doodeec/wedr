@@ -33,7 +33,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/padding"
             android:paddingRight="@dimen/padding"
-            android:text="Wednesday"
             android:fontFamily="sans-serif-light"
             android:textSize="@dimen/forecast_day"
             android:textColor="@color/dark_grey"/>
@@ -43,7 +42,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="bottom"
-            android:text="22°C"
             android:fontFamily="sans-serif-medium"
             android:textSize="@dimen/forecast_temp"
             android:textColor="@color/dark_grey"
@@ -58,7 +56,6 @@
             android:paddingRight="@dimen/padding"
             android:gravity="bottom"
             android:singleLine="true"
-            android:text="Sunny sunny sunny sunnier"
             android:fontFamily="sans-serif-light"
             android:textSize="@dimen/forecast_condition"
             android:textColor="@color/dark_grey"

@@ -14,7 +14,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_launcher"/>
+        android:src="@drawable/ic_launcher"
+        android:contentDescription="@string/drawer_content_description"/>
 
     <TextView
         android:id="@+id/menu_item_label"
@@ -22,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/big_padding"
-        android:text="Menu item"
+        android:singleLine="true"
         android:textSize="@dimen/menu_text"
         android:textColor="@color/dark_grey"
         android:layout_toRightOf="@id/menu_item_icon"/>

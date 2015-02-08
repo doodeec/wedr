@@ -3,6 +3,8 @@ package com.doodeec.weather.android;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
 /**
@@ -37,5 +39,10 @@ public class WedrApplication extends Application {
 
     public static SharedPreferences getDefaultSharedPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(mInstance);
+    }
+
+    public static boolean isConnectionAvailable() {
+        NetworkInfo networkInfo = ((ConnectivityManager) mInstance.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
     }
 }

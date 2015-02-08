@@ -11,8 +11,7 @@
         android:layout_margin="@dimen/small_padding"
         android:layout_centerHorizontal="true"
         android:scaleType="fitCenter"
-        android:contentDescription="@string/info_icon_description"
-        android:src="@drawable/ic_weather_direction"/>
+        android:contentDescription="@string/info_icon_description"/>
 
     <TextView
         android:id="@+id/info_text"
@@ -23,7 +22,6 @@
         android:layout_below="@id/info_icon"
         android:textSize="@dimen/today_weather_info"
         android:fontFamily="sans-serif-medium"
-        android:textColor="@color/today_info"
-        android:text="1019 hPa"/>
+        android:textColor="@color/today_info"/>
 
 </RelativeLayout>

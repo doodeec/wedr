@@ -13,6 +13,7 @@ import com.doodeec.weather.android.client.data.SessionData;
 import com.doodeec.weather.android.client.data.WeatherData;
 import com.doodeec.weather.android.fragment.TodayFragment;
 import com.doodeec.weather.android.geoloc.LocationService;
+import com.doodeec.weather.android.util.WedrLog;
 
 public class TodayActivity extends BaseDrawerActivity implements TodayFragment.OnTodayInteractionListener,
         LocationService.OnLocationRetrievedListener {
@@ -39,19 +40,21 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
         super.onResume();
         mTodayFragment = (TodayFragment) getSupportFragmentManager().findFragmentByTag(TodayFragment.TODAY_FRG_TAG);
 
-        //TODO load last data
+        //TODO load last stored data or show "data unavailable message"
         onRefreshInvoked();
     }
 
     @Override
     public void onLocation(double latitude, double longitude) {
-        //TODO refresh active
+        mTodayFragment.setRefreshing(true);
         mLoadWeatherRequest = APIService.loadWeatherForLocation(latitude, longitude,
                 new BaseRequestListener<WeatherData>() {
                     @Override
                     public void onError(RequestError requestError) {
-                        Toast.makeText(TodayActivity.this, "Error loading data", Toast.LENGTH_SHORT).show();
+                        WedrLog.e("Error loading weather: " + requestError.getMessage());
+                        Toast.makeText(TodayActivity.this, R.string.weather_data_error, Toast.LENGTH_SHORT).show();
                         if (mTodayFragment.isAdded()) {
+                            mTodayFragment.setRefreshing(false);
                             mTodayFragment.showProgress(false);
                         }
                         mLoadWeatherRequest = null;
@@ -62,6 +65,7 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                         SessionData.getInstance().setWeatherData(weatherData);
                         if (mTodayFragment.isAdded()) {
                             mTodayFragment.updateData(weatherData);
+                            mTodayFragment.setRefreshing(false);
                             mTodayFragment.showProgress(false);
                         }
 
@@ -71,8 +75,9 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
 
                     @Override
                     public void onCancelled() {
-                        Toast.makeText(TodayActivity.this, "Data loading cancelled", Toast.LENGTH_SHORT).show();
+                        WedrLog.w("Weather loading cancelled");
                         if (mTodayFragment.isAdded()) {
+                            mTodayFragment.setRefreshing(false);
                             mTodayFragment.showProgress(false);
                         }
                         mLoadWeatherRequest = null;
@@ -86,17 +91,19 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
 
     @Override
     public void onLocationError() {
-        Toast.makeText(this, "Location unavailable", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.location_error, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onPause() {
         // stop loading request if activity is paused
         if (mLoadWeatherRequest != null) {
+            WedrLog.w("Cancelling weather loading");
             mLoadWeatherRequest.cancel(true);
             mLoadWeatherRequest = null;
         }
         if (mLoadIconRequest != null) {
+            WedrLog.w("Cancelling weather icon loading");
             mLoadIconRequest.cancel(true);
             mLoadIconRequest = null;
         }
@@ -117,12 +124,13 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
     private void loadWeatherIcon(WeatherData weatherData) {
         if (weatherData != null && weatherData.getCondition() != null &&
                 weatherData.getCondition().getIconURL() != null) {
+
+            WedrLog.d("Loading weather icon: " + weatherData.getCondition().getIconURL());
             mLoadIconRequest = APIService.loadWeatherIcon(weatherData.getCondition().getIconURL(),
                     new BaseRequestListener<Bitmap>() {
                         @Override
                         public void onError(RequestError error) {
-                            //TODO show this?
-                            Toast.makeText(TodayActivity.this, "Error loading weather icon", Toast.LENGTH_SHORT).show();
+                            WedrLog.e("Error loading weather icon: " + error.getMessage());
                             mLoadIconRequest = null;
                         }
 

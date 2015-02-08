@@ -1,0 +1,4 @@
+<resources>
+    <!--today-->
+    <dimen name="today_info_view_size">150dp</dimen>
+</resources>

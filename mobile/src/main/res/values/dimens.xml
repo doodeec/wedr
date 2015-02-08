@@ -1,9 +1,10 @@
 <resources>
     <!--common-->
+    <!-- different for various screen sizes -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="separator_secondary_size">1dp</dimen>
     <dimen name="progressbar_size">30dp</dimen>
-    
+
     <!--drawer-->
     <dimen name="menu_text">22sp</dimen>
     <dimen name="drawer_width">300dp</dimen>
@@ -16,6 +17,7 @@
 
     <!--today-->
     <dimen name="today_icon_size">80dp</dimen>
+    <!-- different for various screen sizes -->
     <dimen name="today_info_view_size">110dp</dimen>
     <dimen name="today_info_icon_size">22dp</dimen>
     <dimen name="today_separator_width">100dp</dimen>
