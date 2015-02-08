@@ -14,8 +14,7 @@ import com.doodeec.weather.android.client.data.WeatherData;
 import com.doodeec.weather.android.fragment.TodayFragment;
 import com.doodeec.weather.android.geoloc.LocationService;
 
-public class TodayActivity extends BaseDrawerActivity implements TodayFragment.OnTodayInteractionListener,
-        LocationService.OnLocationRetrievedListener {
+public class TodayActivity extends BaseDrawerActivity implements LocationService.OnLocationRetrievedListener {
 
     private CancellableServerRequest mLoadWeatherRequest;
     private CancellableServerRequest mLoadIconRequest;
@@ -37,6 +36,8 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
         super.onResume();
         mTodayFragment = (TodayFragment) getSupportFragmentManager().findFragmentByTag(TodayFragment.TODAY_FRG_TAG);
 
+        mTodayFragment.showProgress(true);
+        //TODO load last data
         LocationService.requestLocation(this);
     }
 
@@ -53,7 +54,11 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                     @Override
                     public void onSuccess(WeatherData weatherData) {
                         SessionData.getInstance().setWeatherData(weatherData);
-                        mTodayFragment.updateData(weatherData);
+                        if (mTodayFragment.isAdded()) {
+                            mTodayFragment.updateData(weatherData);
+                            mTodayFragment.showProgress(false);
+                        }
+
                         mLoadWeatherRequest = null;
                         loadWeatherIcon(weatherData);
                     }

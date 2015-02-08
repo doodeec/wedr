@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:contentDescription="@string/condition_icon_description"
-            android:background="@color/light_blue"/>
+            android:background="@drawable/shape_circle"/>
     </RelativeLayout>
 
     <RelativeLayout

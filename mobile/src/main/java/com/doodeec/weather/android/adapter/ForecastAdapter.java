@@ -9,15 +9,20 @@ import android.view.ViewGroup;
 import com.doodeec.scom.RequestError;
 import com.doodeec.scom.listener.BaseRequestListener;
 import com.doodeec.weather.android.R;
+import com.doodeec.weather.android.WedrConfig;
 import com.doodeec.weather.android.cache.ImageCache;
 import com.doodeec.weather.android.client.APIService;
 import com.doodeec.weather.android.client.data.model.DailyForecast;
+import com.doodeec.weather.android.util.WedrLog;
+import com.doodeec.weather.android.util.WedrPreferences;
 import com.doodeec.weather.android.view.ForecastViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Adapter for displaying Daily Forecast summary data
+ *
  * @author Dusan Bartos
  */
 public class ForecastAdapter extends RecyclerView.Adapter<ForecastViewHolder> {
@@ -48,8 +53,13 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastViewHolder> {
         DailyForecast forecast = mForecastData.get(position);
 
         holder.setDay(forecast.getDayOfWeek());
-        holder.setTemperature(String.format("%d°C", forecast.getHourlyForecast().get(0).getTempC()));
         holder.setWeatherDescription(forecast.getHourlyForecast().get(0).getWeatherDescription());
+
+        if (WedrPreferences.getTemperatureUnit().equals(WedrPreferences.TemperatureUnit.Fahrenheit)) {
+            holder.setTemperature(String.format(WedrConfig.TEMP_FORMAT_F, forecast.getHourlyForecast().get(0).getTempF()));
+        } else {
+            holder.setTemperature(String.format(WedrConfig.TEMP_FORMAT_C, forecast.getHourlyForecast().get(0).getTempC()));
+        }
 
         String iconUrl = forecast.getHourlyForecast().get(0).getWeatherIconUrl();
         Bitmap cachedIcon = ImageCache.getBitmapFromCache(iconUrl);
@@ -59,6 +69,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastViewHolder> {
             APIService.loadWeatherIcon(iconUrl, new BaseRequestListener<Bitmap>() {
                 @Override
                 public void onError(RequestError error) {
+                    WedrLog.e("Error loading weather icon");
                 }
 
                 @Override

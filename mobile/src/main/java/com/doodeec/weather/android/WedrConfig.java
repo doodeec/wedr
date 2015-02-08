@@ -21,4 +21,10 @@ public class WedrConfig {
      * Enables/disables logCat logging
      */
     public static final boolean ENABLE_LOGS = true;
+
+    /**
+     * Helpers for temperature formatting
+     */
+    public static final String TEMP_FORMAT_C = "%d°C";
+    public static final String TEMP_FORMAT_F = "%dF";
 }

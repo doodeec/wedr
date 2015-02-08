@@ -1,6 +1,5 @@
 package com.doodeec.weather.android.fragment;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.os.Build;
@@ -11,12 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.doodeec.weather.android.R;
-import com.doodeec.weather.android.client.data.model.NearestLocation;
+import com.doodeec.weather.android.WedrConfig;
 import com.doodeec.weather.android.client.data.WeatherData;
+import com.doodeec.weather.android.client.data.model.NearestLocation;
 import com.doodeec.weather.android.util.OvalImageView;
+import com.doodeec.weather.android.util.WedrPreferences;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -24,13 +26,9 @@ import butterknife.InjectView;
 public class TodayFragment extends Fragment {
 
     public static final String TODAY_FRG_TAG = "todayFragment";
-
-    private static final String TEMP_FORMAT_C = "%d°C";
-    private static final String TEMP_FORMAT_F = "%dF";
     private static final String LOC_FORMAT = "%s, %s";
 
-    private OnTodayInteractionListener mListener;
-    @InjectView(R.id.weather_icon)
+    @InjectView(R.id.today_weather_icon)
     ImageView mWeatherIcon;
     @InjectView(R.id.weather_temperature)
     TextView mWeatherTemp;
@@ -38,6 +36,8 @@ public class TodayFragment extends Fragment {
     TextView mWeatherDesc;
     @InjectView(R.id.location_region_country)
     TextView mLocRegionCountry;
+    @InjectView(R.id.weather_progressbar)
+    RelativeLayout mProgressBar;
 
     public static TodayFragment newInstance() {
         TodayFragment fragment = new TodayFragment();
@@ -61,33 +61,25 @@ public class TodayFragment extends Fragment {
         ButterKnife.inject(this, rootView);
 
         if (mWeatherTemp == null || mWeatherDesc == null || mLocRegionCountry == null ||
-                mWeatherIcon == null) {
+                mWeatherIcon == null || mProgressBar == null) {
             throw new AssertionError("Today fragment has invalid layout");
         }
 
         return rootView;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnTodayInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
+    /**
+     * Updates data in fragment with the new object
+     *
+     * @param weatherData data to set
+     */
     public void updateData(WeatherData weatherData) {
-        //TODO pick C or F
-        mWeatherTemp.setText(String.format(TEMP_FORMAT_C, weatherData.getCondition().getTempC()));
+        if (WedrPreferences.getTemperatureUnit().equals(WedrPreferences.TemperatureUnit.Fahrenheit)) {
+            mWeatherTemp.setText(String.format(WedrConfig.TEMP_FORMAT_F, weatherData.getCondition().getTempF()));
+        } else {
+            // celsius is default
+            mWeatherTemp.setText(String.format(WedrConfig.TEMP_FORMAT_C, weatherData.getCondition().getTempC()));
+        }
 
         mWeatherDesc.setText(weatherData.getCondition().getWeatherDescription());
 
@@ -104,6 +96,11 @@ public class TodayFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets synchronously loaded weather icon into the layout
+     *
+     * @param weatherIcon icon bitmap
+     */
     public void updateIcon(Bitmap weatherIcon) {
         // clip to oval icon
         // for Lollipop use outline provider, for pre-Lollipop devices fallback to OvalImageView
@@ -129,7 +126,12 @@ public class TodayFragment extends Fragment {
         mWeatherIcon.setImageBitmap(weatherIcon);
     }
 
-    public interface OnTodayInteractionListener {
-
+    /**
+     * Shows/hides progress loader
+     *
+     * @param show true to show progress, false to hide progress
+     */
+    public void showProgress(boolean show) {
+        mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 }

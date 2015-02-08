@@ -1,103 +1,106 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/padding"
-                android:paddingBottom="@dimen/padding"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin">
+                android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/today_weather_icon"
-        android:layout_width="@dimen/today_icon_size"
-        android:layout_height="@dimen/today_icon_size"
-        android:layout_marginTop="@dimen/padding"
-        android:layout_centerHorizontal="true">
-
-        <com.doodeec.weather.android.util.OvalImageView
-            android:id="@+id/weather_icon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:contentDescription="@string/condition_icon_description"
-            android:background="@color/light_blue"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/today_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/big_padding"
-        android:gravity="center_horizontal"
-        android:layout_below="@id/today_weather_icon">
+        android:paddingTop="@dimen/padding"
+        android:paddingBottom="@dimen/padding"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <com.doodeec.weather.android.util.OvalImageView
+            android:id="@+id/today_weather_icon"
+            android:layout_width="@dimen/today_icon_size"
+            android:layout_height="@dimen/today_icon_size"
+            android:layout_marginTop="@dimen/padding"
+            android:layout_centerHorizontal="true"
+            android:scaleType="fitXY"
+            android:contentDescription="@string/condition_icon_description"
+            android:background="@drawable/shape_circle"/>
 
         <TextView
             android:id="@+id/location_region_country"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/big_padding"
+            android:layout_below="@id/today_weather_icon"
             android:gravity="center_horizontal"
             android:fontFamily="sans-serif-light"
             android:textSize="@dimen/today_location_text"
             android:textColor="@color/today_location"/>
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/today_weather"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_padding"
+            android:gravity="center_horizontal"
+            android:layout_below="@id/location_region_country">
 
-    <RelativeLayout
-        android:id="@+id/today_weather"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/small_padding"
-        android:gravity="center_horizontal"
-        android:layout_below="@id/today_location">
+            <View
+                android:id="@+id/weather_separator"
+                android:layout_width="3dp"
+                android:layout_height="@dimen/today_weather_text"
+                android:layout_marginLeft="@dimen/padding"
+                android:layout_marginRight="@dimen/padding"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:background="@color/today_weather"/>
+
+            <TextView
+                android:id="@+id/weather_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="@dimen/today_weather_text"
+                android:textColor="@color/today_weather"
+                android:layout_toLeftOf="@id/weather_separator"/>
+
+            <TextView
+                android:id="@+id/weather_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="@dimen/today_weather_text"
+                android:textColor="@color/today_weather"
+                android:layout_toRightOf="@id/weather_separator"/>
+        </RelativeLayout>
 
         <View
-            android:id="@+id/weather_separator"
-            android:layout_width="3dp"
-            android:layout_height="@dimen/today_weather_text"
-            android:layout_marginLeft="@dimen/padding"
-            android:layout_marginRight="@dimen/padding"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:background="@color/today_weather"/>
+            android:id="@+id/today_layout_separator"
+            android:layout_width="@dimen/today_separator_width"
+            android:layout_height="@dimen/separator_secondary_size"
+            android:layout_marginTop="@dimen/big_padding"
+            android:layout_marginBottom="@dimen/big_padding"
+            android:background="@color/today_separator"
+            android:layout_below="@id/today_weather"
+            android:layout_centerHorizontal="true"/>
 
-        <TextView
-            android:id="@+id/weather_temperature"
+        <RelativeLayout
+            android:id="@+id/today_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_centerVertical="true"
-            android:fontFamily="sans-serif-medium"
-            android:textSize="@dimen/today_weather_text"
-            android:textColor="@color/today_weather"
-            android:layout_toLeftOf="@id/weather_separator"/>
+            android:gravity="center_horizontal"
+            android:layout_below="@id/today_layout_separator">
 
-        <TextView
-            android:id="@+id/weather_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:textSize="@dimen/today_weather_text"
-            android:textColor="@color/today_weather"
-            android:layout_toRightOf="@id/weather_separator"/>
+
+        </RelativeLayout>
     </RelativeLayout>
 
-    <View
-        android:id="@+id/today_layout_separator"
-        android:layout_width="@dimen/today_separator_width"
-        android:layout_height="@dimen/separator_secondary_size"
-        android:layout_marginTop="@dimen/big_padding"
-        android:layout_marginBottom="@dimen/big_padding"
-        android:background="@color/today_separator"
-        android:layout_below="@id/today_weather"
-        android:layout_centerHorizontal="true"/>
-
     <RelativeLayout
-        android:id="@+id/today_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_below="@id/today_layout_separator">
+        android:id="@+id/weather_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white_semitransparent">
 
+        <ProgressBar
+            android:layout_width="@dimen/progressbar_size"
+            android:layout_height="@dimen/progressbar_size"
+            android:layout_centerInParent="true"/>
 
     </RelativeLayout>
 

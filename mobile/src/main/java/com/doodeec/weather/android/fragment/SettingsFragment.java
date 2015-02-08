@@ -6,6 +6,7 @@ import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 
 import com.doodeec.weather.android.R;
+import com.doodeec.weather.android.util.WedrPreferences;
 
 /**
  * @author Dusan Bartos 
@@ -13,7 +14,7 @@ import com.doodeec.weather.android.R;
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String SETTINGS_FRG_TAG = "settingsFragment";
-    
+
     private ListPreference lengthPreference;
     private ListPreference tempPreference;
 
@@ -29,8 +30,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         super.onCreate(paramBundle);
         addPreferencesFromResource(R.xml.pref_general);
 
-        lengthPreference = (ListPreference) findPreference("length_unit");
-        tempPreference = (ListPreference) findPreference("temperature_unit");
+        lengthPreference = (ListPreference) findPreference(WedrPreferences.PREFERENCE_LENGTH_UNIT);
+        tempPreference = (ListPreference) findPreference(WedrPreferences.PREFERENCE_TEMP_UNIT);
     }
 
     @Override

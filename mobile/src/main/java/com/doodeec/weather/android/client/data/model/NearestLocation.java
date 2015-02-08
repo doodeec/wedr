@@ -1,12 +1,17 @@
 package com.doodeec.weather.android.client.data.model;
 
+import android.content.ContentValues;
+
+import com.doodeec.weather.android.database.model.IDatabaseSavable;
+import com.doodeec.weather.android.database.model.LocationDBEntry;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * @author Dusan Bartos
  */
-public class NearestLocation extends JSONParser {
+public class NearestLocation extends JSONParser implements IDatabaseSavable {
 
     public static final String KEY_NEAREST = "nearest_area";
 
@@ -36,7 +41,7 @@ public class NearestLocation extends JSONParser {
             mRegion = getString(regionObject, KEY_VALUE);
         }
     }
-    
+
     public String getCountry() {
         return mCountry;
     }
@@ -51,5 +56,30 @@ public class NearestLocation extends JSONParser {
 
     public Double getLongitude() {
         return mLon;
+    }
+
+    @Override
+    public ContentValues getContentValues() {
+        ContentValues values = new ContentValues();
+        values.put(LocationDBEntry.COL_LATITUDE, mLat);
+        values.put(LocationDBEntry.COL_LONGITUDE, mLon);
+        values.put(LocationDBEntry.COL_REGION, mRegion);
+        values.put(LocationDBEntry.COL_COUNTRY, mCountry);
+        return values;
+    }
+
+    @Override
+    public String getTableName() {
+        return LocationDBEntry.TABLE_NAME;
+    }
+
+    @Override
+    public String getPrimaryColumnName() {
+        return ""; // only insert strategy, does not need update parameters
+    }
+
+    @Override
+    public String getPrimaryColumnValue() {
+        return ""; // only insert strategy, does not need update parameters
     }
 }

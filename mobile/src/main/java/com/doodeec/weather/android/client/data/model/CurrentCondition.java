@@ -1,6 +1,10 @@
 package com.doodeec.weather.android.client.data.model;
 
+import android.content.ContentValues;
+
 import com.doodeec.weather.android.client.data.WindDirection;
+import com.doodeec.weather.android.database.model.IDatabaseSavable;
+import com.doodeec.weather.android.database.model.SimpleConditionDBEntry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,7 +12,7 @@ import org.json.JSONObject;
 /**
  * @author Dusan Bartos
  */
-public class CurrentCondition extends JSONParser {
+public class CurrentCondition extends JSONParser implements IDatabaseSavable {
 
     public static final String KEY_CONDITION = "current_condition";
 
@@ -44,6 +48,7 @@ public class CurrentCondition extends JSONParser {
     private Integer mWindSpeedKm;
     private Integer mWindSpeedMi;
     private String mObservationTime;
+    private long mTimestamp;
 
     /**
      * Current condition constructor from JSON definition
@@ -138,11 +143,45 @@ public class CurrentCondition extends JSONParser {
         return mWindSpeedMi;
     }
 
+    //TODO validate URL
     /*public URL getIconURL() {
         return mWeatherIconUrl;
     }*/
 
     public String getIconURL() {
         return mWeatherIconUrl;
+    }
+
+    public void setTimestamp(long timestamp) {
+        mTimestamp = timestamp;
+    }
+
+    public long getTimestamp() {
+        return mTimestamp;
+    }
+
+    @Override
+    public ContentValues getContentValues() {
+        ContentValues values = new ContentValues();
+        values.put(SimpleConditionDBEntry.COL_DESCRIPTION, mWeatherDescription);
+        values.put(SimpleConditionDBEntry.COL_TEMP_C, mTempC);
+        values.put(SimpleConditionDBEntry.COL_TEMP_F, mTempF);
+        values.put(SimpleConditionDBEntry.COL_DATE, mTimestamp);
+        return values;
+    }
+
+    @Override
+    public String getTableName() {
+        return SimpleConditionDBEntry.TABLE_NAME;
+    }
+
+    @Override
+    public String getPrimaryColumnName() {
+        return null;
+    }
+
+    @Override
+    public String getPrimaryColumnValue() {
+        return null;
     }
 }

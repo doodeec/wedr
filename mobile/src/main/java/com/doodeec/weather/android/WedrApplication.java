@@ -3,6 +3,7 @@ package com.doodeec.weather.android;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 /**
  * @author Dusan Bartos
@@ -10,7 +11,7 @@ import android.content.SharedPreferences;
 public class WedrApplication extends Application {
 
     private static final String WEDR_PREFERENCES_KEY = "wedrPreferences";
-    
+
     private static WedrApplication mInstance;
 
     public WedrApplication() {
@@ -33,8 +34,8 @@ public class WedrApplication extends Application {
     public static Context getContext() {
         return mInstance;
     }
-    
-    public static SharedPreferences getPreferences() {
-        return mInstance.getSharedPreferences(WEDR_PREFERENCES_KEY, Context.MODE_PRIVATE);
+
+    public static SharedPreferences getDefaultSharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(mInstance);
     }
 }

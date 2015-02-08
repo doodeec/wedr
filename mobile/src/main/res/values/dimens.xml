@@ -1,24 +1,29 @@
 <resources>
+    <!--common-->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="separator_secondary_size">1dp</dimen>
+    <dimen name="progressbar_size">30dp</dimen>
     
+    <!--drawer-->
     <dimen name="menu_text">22sp</dimen>
+    <dimen name="drawer_width">300dp</dimen>
 
+    <!--forecast-->
     <dimen name="forecast_icon_size">70dp</dimen>
     <dimen name="forecast_day">33sp</dimen>
     <dimen name="forecast_condition">18sp</dimen>
     <dimen name="forecast_temp">33sp</dimen>
 
+    <!--today-->
     <dimen name="today_icon_size">80dp</dimen>
     <dimen name="today_separator_width">100dp</dimen>
     <dimen name="today_location_text">24sp</dimen>
     <dimen name="today_weather_text">33sp</dimen>
     <dimen name="today_weather_info">20sp</dimen>
 
+    <!--paddings-->
     <dimen name="big_padding">32dp</dimen>
     <dimen name="padding">16dp</dimen>
     <dimen name="medium_padding">8dp</dimen>
     <dimen name="small_padding">4dp</dimen>
-
-    <dimen name="drawer_width">300dp</dimen>
 </resources>
