@@ -4,11 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:paddingLeft="@dimen/padding"
-              android:paddingTop="@dimen/padding"
-              android:clickable="true"
-              android:focusable="true"
-              android:focusableInTouchMode="true"
-              android:background="@drawable/selector_drawer_menu_item">
+              android:paddingTop="@dimen/padding">
 
     <RelativeLayout
         android:id="@+id/forecast_icon"

@@ -1,13 +1,11 @@
 package com.doodeec.weather.android.activity;
 
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.doodeec.weather.android.R;
-import com.doodeec.weather.android.client.data.model.DailyForecast;
 import com.doodeec.weather.android.fragment.ForecastFragment;
 
-public class ForecastActivity extends BaseDrawerActivity implements ForecastFragment.OnForecastInteractionListener {
+public class ForecastActivity extends BaseDrawerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,10 +16,5 @@ public class ForecastActivity extends BaseDrawerActivity implements ForecastFrag
                     .add(R.id.container, ForecastFragment.newInstance(), ForecastFragment.FORECAST_FRG_TAG)
                     .commit();
         }
-    }
-
-    @Override
-    public void onDailyForecastClicked(DailyForecast dailyForecast) {
-        Toast.makeText(this, R.string.forecast_detail_click, Toast.LENGTH_SHORT).show();
     }
 }

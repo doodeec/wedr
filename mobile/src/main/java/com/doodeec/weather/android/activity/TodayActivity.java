@@ -44,6 +44,7 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                 SessionData.getInstance().getWeatherData().getNearestLocation() != null) {
             if (mTodayFragment.isAdded()) {
                 mTodayFragment.updateData(SessionData.getInstance().getWeatherData());
+                mTodayFragment.showEmptyDataMessage(false);
             }
         }
 
@@ -64,7 +65,6 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                         Toast.makeText(TodayActivity.this, R.string.weather_data_error, Toast.LENGTH_SHORT).show();
                         if (mTodayFragment.isAdded()) {
                             mTodayFragment.setRefreshing(false);
-                            mTodayFragment.showProgress(false);
                         }
                         mLoadWeatherRequest = null;
                     }
@@ -75,7 +75,7 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                         if (mTodayFragment.isAdded()) {
                             mTodayFragment.updateData(weatherData);
                             mTodayFragment.setRefreshing(false);
-                            mTodayFragment.showProgress(false);
+                            mTodayFragment.showEmptyDataMessage(false);
                         }
 
                         mLoadWeatherRequest = null;
@@ -87,7 +87,6 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                         WedrLog.w("Weather loading cancelled");
                         if (mTodayFragment.isAdded()) {
                             mTodayFragment.setRefreshing(false);
-                            mTodayFragment.showProgress(false);
                         }
                         mLoadWeatherRequest = null;
                     }
@@ -121,7 +120,6 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
 
     @Override
     public void onRefreshInvoked() {
-        mTodayFragment.showProgress(true);
         LocationService.requestLocation(this);
     }
 

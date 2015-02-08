@@ -12,6 +12,7 @@
     <!--Today activity-->
     <string name="condition_icon_description">Current condition icon</string>
     <string name="info_icon_description">Current condition info</string>
+    <string name="data_not_available">Weather data not available.</string>
 
     <!--Forecast activity-->
     <string name="forecast_detail_click">Daily forecast clicked</string>

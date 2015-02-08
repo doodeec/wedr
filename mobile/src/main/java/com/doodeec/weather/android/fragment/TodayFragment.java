@@ -42,8 +42,8 @@ public class TodayFragment extends Fragment {
     TextView mWeatherDesc;
     @InjectView(R.id.location_region_country)
     TextView mLocRegionCountry;
-    @InjectView(R.id.weather_progressbar)
-    RelativeLayout mProgressBar;
+    @InjectView(R.id.empty_data)
+    RelativeLayout mEmptyDataMessage;
     @InjectView(R.id.info_humidity)
     WeatherInfoView mHumidityInfo;
     @InjectView(R.id.info_precipitation)
@@ -83,7 +83,7 @@ public class TodayFragment extends Fragment {
         ButterKnife.inject(this, rootView);
 
         if (mWeatherTemp == null || mWeatherDesc == null || mLocRegionCountry == null ||
-                mWeatherIcon == null || mProgressBar == null || mHumidityInfo == null ||
+                mWeatherIcon == null || mEmptyDataMessage == null || mHumidityInfo == null ||
                 mPrecipitationInfo == null || mPressureInfo == null || mWindSpeedInfo == null ||
                 mWindDirectionInfo == null || mRefreshLayout == null) {
             throw new AssertionError("Today fragment has invalid layout");
@@ -205,12 +205,12 @@ public class TodayFragment extends Fragment {
     }
 
     /**
-     * Shows/hides progress loader
+     * Shows/hides empty data message
      *
-     * @param show true to show progress, false to hide progress
+     * @param show true to show message
      */
-    public void showProgress(boolean show) {
-        mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    public void showEmptyDataMessage(boolean show) {
+        mEmptyDataMessage.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public interface OnTodayInteractionListener {

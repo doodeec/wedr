@@ -12,12 +12,16 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.doodeec.weather.android.R;
 import com.doodeec.weather.android.activity.drawer.DrawerMenuItem;
 import com.doodeec.weather.android.adapter.DrawerAdapter;
 import com.doodeec.weather.android.dialog.AboutDialog;
 import com.doodeec.weather.android.util.RecyclerViewItemClickListener;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 /**
  * Base drawer activity provides layout with drawer
@@ -27,22 +31,33 @@ import com.doodeec.weather.android.util.RecyclerViewItemClickListener;
  */
 public abstract class BaseDrawerActivity extends ActionBarActivity implements RecyclerViewItemClickListener.OnItemClickListener {
 
-    private DrawerLayout mDrawerLayout;
-    private RecyclerView mDrawerMenu;
+    @InjectView(R.id.drawer_area)
+    RelativeLayout mDrawerArea;
+    @InjectView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+    @InjectView(R.id.drawer_menu)
+    RecyclerView mDrawerMenu;
+
     protected DrawerAdapter mDrawerAdapter;
     protected ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.anim_enter_from_right, R.anim.anim_leave_to_left20);
         setContentView(R.layout.activity_base);
+
+        ButterKnife.inject(this);
+
+        if (mDrawerArea == null || mDrawerLayout == null || mDrawerMenu == null) {
+            throw new AssertionError("Base drawer activity has invalid layout");
+        }
 
         mDrawerAdapter = new DrawerAdapter(this, new DrawerMenuItem[]{
                 new DrawerMenuItem(R.string.drawer_today, R.drawable.ic_drawer_today_dark),
                 new DrawerMenuItem(R.string.drawer_forecast, R.drawable.ic_drawer_forecast_dark)
         });
 
-        mDrawerMenu = (RecyclerView) findViewById(R.id.drawer_menu);
         mDrawerMenu.setLayoutManager(new LinearLayoutManager(this));
         mDrawerMenu.setAdapter(mDrawerAdapter);
         mDrawerMenu.setHasFixedSize(true);
@@ -54,7 +69,6 @@ public abstract class BaseDrawerActivity extends ActionBarActivity implements Re
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         // setup drawer toggle
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
@@ -81,6 +95,12 @@ public abstract class BaseDrawerActivity extends ActionBarActivity implements Re
             }
         });
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+    }
+
+    @Override
+    protected void onPause() {
+        overridePendingTransition(R.anim.anim_enter_from_left20, R.anim.anim_leave_to_right);
+        super.onPause();
     }
 
     @Override
@@ -123,7 +143,7 @@ public abstract class BaseDrawerActivity extends ActionBarActivity implements Re
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
+                if (mDrawerLayout.isDrawerOpen(mDrawerArea)) {
                     mDrawerLayout.closeDrawers();
                 } else {
                     mDrawerLayout.openDrawer(Gravity.START);
@@ -147,7 +167,7 @@ public abstract class BaseDrawerActivity extends ActionBarActivity implements Re
     }
 
     private void hideDrawer() {
-        if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
+        if (mDrawerLayout.isDrawerOpen(mDrawerArea)) {
             mDrawerLayout.closeDrawers();
         }
     }

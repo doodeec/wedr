@@ -20,6 +20,7 @@ public class SettingsActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.anim_enter_from_top, R.anim.anim_leave_to_bottom20);
         setContentView(R.layout.activity_settings);
 
         getFragmentManager().beginTransaction()
@@ -31,6 +32,12 @@ public class SettingsActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowTitleEnabled(true);
+    }
+
+    @Override
+    protected void onPause() {
+        overridePendingTransition(R.anim.anim_enter_from_bottom20, R.anim.anim_leave_to_top);
+        super.onPause();
     }
 
     @Override
