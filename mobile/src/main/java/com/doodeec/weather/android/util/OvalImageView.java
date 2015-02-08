@@ -43,7 +43,8 @@ public class OvalImageView extends ImageView {
     }
 
     public void setRadius(int radius) {
-        this.mRadius = radius;
-        this.invalidate();
+        mRadius = radius;
+        onSizeChanged(getWidth(), getHeight(), 0, 0);
+        invalidate();
     }
 }

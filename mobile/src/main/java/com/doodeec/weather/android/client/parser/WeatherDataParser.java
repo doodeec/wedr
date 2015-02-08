@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
 import java.text.ParseException;
 
 /**
@@ -16,7 +17,8 @@ import java.text.ParseException;
  */
 public class WeatherDataParser {
 
-    public static WeatherData parseWeatherData(JSONObject objectDefinition) throws JSONException, ParseException {
+    public static WeatherData parseWeatherData(JSONObject objectDefinition)
+            throws JSONException, ParseException, MalformedURLException {
         WeatherData weatherData = new WeatherData();
 
         if (objectDefinition.has(WeatherData.KEY_DATA)) {
@@ -52,7 +54,7 @@ public class WeatherDataParser {
     }
 
     private static CurrentCondition parseCurrentConditionData(JSONArray conditionArray)
-            throws JSONException {
+            throws JSONException, MalformedURLException {
         return new CurrentCondition(conditionArray.getJSONObject(0));
     }
 

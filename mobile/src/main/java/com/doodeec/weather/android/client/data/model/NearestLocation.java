@@ -1,6 +1,7 @@
 package com.doodeec.weather.android.client.data.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.doodeec.weather.android.database.model.IDatabaseSavable;
 import com.doodeec.weather.android.database.model.LocationDBEntry;
@@ -9,6 +10,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
+ * Nearest location points to the place where weather info was retrieved
+ *
  * @author Dusan Bartos
  */
 public class NearestLocation extends JSONParser implements IDatabaseSavable {
@@ -27,6 +30,12 @@ public class NearestLocation extends JSONParser implements IDatabaseSavable {
     private Double mLat;
     private Double mLon;
 
+    /**
+     * Constructs Nearest location from JSON definition
+     *
+     * @param jsonDefinition json definition
+     * @throws JSONException
+     */
     public NearestLocation(JSONObject jsonDefinition) throws JSONException {
         mLat = getDouble(jsonDefinition, KEY_GEO_LAT);
         mLon = getDouble(jsonDefinition, KEY_GEO_LON);
@@ -42,20 +51,26 @@ public class NearestLocation extends JSONParser implements IDatabaseSavable {
         }
     }
 
+    /**
+     * Constructs nearest location from DB cursor
+     *
+     * @param cursor DB cursor
+     */
+    public NearestLocation(Cursor cursor) {
+        if (cursor == null || cursor.isClosed()) return;
+
+        mLat = cursor.getDouble(cursor.getColumnIndex(LocationDBEntry.COL_LATITUDE));
+        mLon = cursor.getDouble(cursor.getColumnIndex(LocationDBEntry.COL_LONGITUDE));
+        mRegion = cursor.getString(cursor.getColumnIndex(LocationDBEntry.COL_REGION));
+        mCountry = cursor.getString(cursor.getColumnIndex(LocationDBEntry.COL_COUNTRY));
+    }
+
     public String getCountry() {
         return mCountry;
     }
 
     public String getRegion() {
         return mRegion;
-    }
-
-    public Double getLatitude() {
-        return mLat;
-    }
-
-    public Double getLongitude() {
-        return mLon;
     }
 
     @Override

@@ -23,6 +23,12 @@ public class WedrConfig {
     public static final boolean ENABLE_LOGS = true;
 
     /**
+     * Delay for weather info, not to call server too often
+     * in milliseconds
+     */
+    public static final int WEATHER_THRESHOLD = 30 * 60 * 1000;
+
+    /**
      * Helpers for temperature formatting
      */
     public static final String TEMP_FORMAT_C = "%d°C";

@@ -8,6 +8,7 @@ import com.doodeec.scom.CancellableServerRequest;
 import com.doodeec.scom.RequestError;
 import com.doodeec.scom.listener.BaseRequestListener;
 import com.doodeec.weather.android.R;
+import com.doodeec.weather.android.WedrConfig;
 import com.doodeec.weather.android.client.APIService;
 import com.doodeec.weather.android.client.data.SessionData;
 import com.doodeec.weather.android.client.data.WeatherData;
@@ -30,8 +31,6 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, TodayFragment.newInstance(), TodayFragment.TODAY_FRG_TAG)
                     .commit();
-
-//            LocationService.requestLocation(this);
         }
     }
 
@@ -40,8 +39,18 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
         super.onResume();
         mTodayFragment = (TodayFragment) getSupportFragmentManager().findFragmentByTag(TodayFragment.TODAY_FRG_TAG);
 
-        //TODO load last stored data or show "data unavailable message"
-        onRefreshInvoked();
+        // load stored data
+        if (SessionData.getInstance().getWeatherData().getCondition() != null &&
+                SessionData.getInstance().getWeatherData().getNearestLocation() != null) {
+            if (mTodayFragment.isAdded()) {
+                mTodayFragment.updateData(SessionData.getInstance().getWeatherData());
+            }
+        }
+
+        long now = System.currentTimeMillis();
+        if (now - SessionData.getInstance().getLastUpdateTimestamp() > WedrConfig.WEATHER_THRESHOLD) {
+            onRefreshInvoked();
+        }
     }
 
     @Override
@@ -126,7 +135,8 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                 weatherData.getCondition().getIconURL() != null) {
 
             WedrLog.d("Loading weather icon: " + weatherData.getCondition().getIconURL());
-            mLoadIconRequest = APIService.loadWeatherIcon(weatherData.getCondition().getIconURL(),
+            mLoadIconRequest = APIService.loadWeatherIcon(
+                    weatherData.getCondition().getIconURL().toString(),
                     new BaseRequestListener<Bitmap>() {
                         @Override
                         public void onError(RequestError error) {

@@ -5,8 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.doodeec.weather.android.WedrApplication;
+import com.doodeec.weather.android.client.data.model.CurrentCondition;
+import com.doodeec.weather.android.client.data.model.NearestLocation;
 import com.doodeec.weather.android.database.DatabaseHelper;
 import com.doodeec.weather.android.database.model.IDatabaseSavable;
+import com.doodeec.weather.android.database.model.LocationDBEntry;
+import com.doodeec.weather.android.database.model.SimpleConditionDBEntry;
 import com.doodeec.weather.android.util.WedrLog;
 
 /**
@@ -17,6 +21,7 @@ public class SessionData {
     private static SessionData sInstance;
 
     private WeatherData mWeatherData;
+    private long mLastUpdate;
 
     /**
      * Gets session data singleton
@@ -29,6 +34,14 @@ public class SessionData {
             synchronized (SessionData.class) {
                 if (sInstance == null) {
                     sInstance = new SessionData();
+                    sInstance.mWeatherData = new WeatherData();
+
+                    SQLiteDatabase db = new DatabaseHelper(WedrApplication.getContext()).getReadableDatabase();
+                    sInstance.loadStoredCondition(db);
+                    if (sInstance.mWeatherData.getCondition() != null) {
+                        sInstance.loadStoredLocation(db);
+                    }
+                    db.close();
                 }
             }
         }
@@ -37,16 +50,20 @@ public class SessionData {
 
     public void setWeatherData(WeatherData weatherData) {
         mWeatherData = weatherData;
-        mWeatherData.getCondition().setTimestamp(System.currentTimeMillis());
+        mLastUpdate = System.currentTimeMillis();
+        mWeatherData.getCondition().setTimestamp(mLastUpdate);
 
-        //TODO store some data in DB
+        // save data to database
         SQLiteDatabase db = new DatabaseHelper(WedrApplication.getContext()).getReadableDatabase();
         try {
             db.beginTransaction();
             // store location
-            SessionData.getInstance().saveContentToDb(db, weatherData.getNearestLocation(), true);
-            // store simple condition information
-            SessionData.getInstance().saveContentToDb(db, weatherData.getCondition(), false);
+            long locationId = saveContentToDb(db, weatherData.getNearestLocation(), true);
+            if (locationId != -1) {
+                weatherData.getCondition().setLocationId(locationId);
+                // store simple condition information
+                saveContentToDb(db, weatherData.getCondition(), false);
+            }
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -57,6 +74,35 @@ public class SessionData {
         return mWeatherData;
     }
 
+    public long getLastUpdateTimestamp() {
+        return mLastUpdate;
+    }
+
+    private void loadStoredCondition(SQLiteDatabase db) {
+        Cursor cursor = db.query(SimpleConditionDBEntry.TABLE_NAME, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            mWeatherData.setCondition(new CurrentCondition(cursor));
+        }
+    }
+
+    private void loadStoredLocation(SQLiteDatabase db) {
+        String[] args = {String.valueOf(mWeatherData.getCondition().getLocationId())};
+        Cursor cursor = db.query(LocationDBEntry.TABLE_NAME, null, LocationDBEntry.COL_ID + " = ?", args, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            mWeatherData.setNearestLocation(new NearestLocation(cursor));
+        }
+    }
+
+    /**
+     * Saves data to DB
+     *
+     * @param db              database instance
+     * @param databaseSavable object to save
+     * @param doNotUpdate     true if entry is "insert only", false if update is possible
+     * @return row id
+     */
     private long saveContentToDb(SQLiteDatabase db, IDatabaseSavable databaseSavable, boolean doNotUpdate) {
         ContentValues values = databaseSavable.getContentValues();
         long newRowId;

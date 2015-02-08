@@ -65,7 +65,7 @@ public class WedrPreferences {
      */
     public static LengthUnit getLengthUnit() {
         SharedPreferences preferences = WedrApplication.getDefaultSharedPreferences();
-        return LengthUnit.forValue(preferences.getString(PREFERENCE_LENGTH_UNIT, ""));
+        return LengthUnit.forValue(preferences.getString(PREFERENCE_LENGTH_UNIT, "Meters"));
     }
 
     /**
@@ -75,6 +75,6 @@ public class WedrPreferences {
      */
     public static TemperatureUnit getTemperatureUnit() {
         SharedPreferences preferences = WedrApplication.getDefaultSharedPreferences();
-        return TemperatureUnit.forValue(preferences.getString(PREFERENCE_TEMP_UNIT, ""));
+        return TemperatureUnit.forValue(preferences.getString(PREFERENCE_TEMP_UNIT, "Celsius"));
     }
 }

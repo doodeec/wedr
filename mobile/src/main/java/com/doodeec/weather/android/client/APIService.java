@@ -18,6 +18,7 @@ import com.doodeec.weather.android.client.parser.WeatherDataParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
 import java.text.ParseException;
 
 /**
@@ -64,7 +65,7 @@ public class APIService {
             public void onSuccess(JSONObject object) {
                 try {
                     listener.onSuccess(WeatherDataParser.parseWeatherData(object));
-                } catch (JSONException | ParseException e) {
+                } catch (JSONException | ParseException | MalformedURLException e) {
                     onError(new RequestError(e));
                 }
             }

@@ -20,9 +20,9 @@ import butterknife.InjectView;
 public class DrawerMenuItemViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.menu_item_icon)
-    TextView mItemName;
-    @InjectView(R.id.menu_item_label)
     ImageView mItemIcon;
+    @InjectView(R.id.menu_item_label)
+    TextView mItemName;
 
     public DrawerMenuItemViewHolder(View v) {
         super(v);

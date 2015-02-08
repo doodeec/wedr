@@ -1,6 +1,7 @@
 package com.doodeec.weather.android.client.data.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.doodeec.weather.android.client.data.WindDirection;
 import com.doodeec.weather.android.database.model.IDatabaseSavable;
@@ -8,6 +9,9 @@ import com.doodeec.weather.android.database.model.SimpleConditionDBEntry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * @author Dusan Bartos
@@ -17,9 +21,6 @@ public class CurrentCondition extends JSONParser implements IDatabaseSavable {
     public static final String KEY_CONDITION = "current_condition";
 
     private static final String KEY_VALUE = "value";
-    private static final String KEY_CLOUD_COVER = "cloudcover";
-    private static final String KEY_FEELS_LIKE_C = "FeelsLikeC";
-    private static final String KEY_FEELS_LIKE_F = "FeelsLikeF";
     private static final String KEY_HUMIDITY = "humidity";
     private static final String KEY_OBSERVATION_TIME = "observation_time";
     private static final String KEY_PRECIP_MM = "precipMM";
@@ -33,9 +34,6 @@ public class CurrentCondition extends JSONParser implements IDatabaseSavable {
     private static final String KEY_WIND_SPEED_KM = "windspeedKmph";
     private static final String KEY_WIND_SPEED_MI = "windspeedMiles";
 
-    private Integer mCloudCover;
-    private Integer mFeelTempC;
-    private Integer mFeelTempF;
     private Double mHumidity;
     private Integer mPrecipMM;
     private Double mPrecipInch;
@@ -43,12 +41,13 @@ public class CurrentCondition extends JSONParser implements IDatabaseSavable {
     private Integer mTempC;
     private Integer mTempF;
     private String mWeatherDescription;
-    private String mWeatherIconUrl;
+    private URL mWeatherIconUrl;
     private WindDirection mWindDir;
     private Integer mWindSpeedKm;
     private Integer mWindSpeedMi;
     private String mObservationTime;
     private long mTimestamp;
+    private long mLocationId = -1;
 
     /**
      * Current condition constructor from JSON definition
@@ -57,10 +56,7 @@ public class CurrentCondition extends JSONParser implements IDatabaseSavable {
      *
      * @param jsonDefinition json object
      */
-    public CurrentCondition(JSONObject jsonDefinition) throws JSONException {
-        mCloudCover = getInt(jsonDefinition, KEY_CLOUD_COVER);
-        mFeelTempC = getInt(jsonDefinition, KEY_FEELS_LIKE_C);
-        mFeelTempF = getInt(jsonDefinition, KEY_FEELS_LIKE_F);
+    public CurrentCondition(JSONObject jsonDefinition) throws JSONException, MalformedURLException {
         mHumidity = getDouble(jsonDefinition, KEY_HUMIDITY);
         mPrecipMM = getInt(jsonDefinition, KEY_PRECIP_MM);
         mPrecipInch = getDouble(jsonDefinition, KEY_PRECIP_IN);
@@ -76,31 +72,37 @@ public class CurrentCondition extends JSONParser implements IDatabaseSavable {
         mWindSpeedMi = getInt(jsonDefinition, KEY_WIND_SPEED_MI);
         mObservationTime = getString(jsonDefinition, KEY_OBSERVATION_TIME);
 
-        /*try {
-            mWeatherIconUrl = new URL(getString(jsonDefinition, KEY_WEATHER_ICON, ""));
-        } catch (MalformedURLException e) {
-            WedrLog.e(e.getMessage());
-        }*/
         if (jsonDefinition.has(KEY_WEATHER_ICON)) {
             JSONObject iconObject = jsonDefinition.getJSONArray(KEY_WEATHER_ICON).getJSONObject(0);
-            mWeatherIconUrl = getString(iconObject, KEY_VALUE);
+            mWeatherIconUrl = new URL(getString(iconObject, KEY_VALUE, ""));
         }
+    }
+
+    /**
+     * Constructs simple condition from DB cursor
+     *
+     * @param cursor DB cursor
+     */
+    public CurrentCondition(Cursor cursor) {
+        if (cursor == null || cursor.isClosed()) return;
+
+        mHumidity = cursor.getDouble(cursor.getColumnIndex(SimpleConditionDBEntry.COL_HUMIDITY));
+        mPressure = cursor.getInt(cursor.getColumnIndex(SimpleConditionDBEntry.COL_PRESSURE));
+        mPrecipMM = cursor.getInt(cursor.getColumnIndex(SimpleConditionDBEntry.COL_PRECIP_MM));
+        mPrecipInch = cursor.getDouble(cursor.getColumnIndex(SimpleConditionDBEntry.COL_PRECIP_IN));
+        mTempC = cursor.getInt(cursor.getColumnIndex(SimpleConditionDBEntry.COL_TEMP_C));
+        mTempF = cursor.getInt(cursor.getColumnIndex(SimpleConditionDBEntry.COL_TEMP_F));
+        mWeatherDescription = cursor.getString(cursor.getColumnIndex(SimpleConditionDBEntry.COL_DESCRIPTION));
+        mWindDir = WindDirection.forAbbreviation(
+                cursor.getString(cursor.getColumnIndex(SimpleConditionDBEntry.COL_WIND_DIRECTION)));
+        mWindSpeedKm = cursor.getInt(cursor.getColumnIndex(SimpleConditionDBEntry.COL_WIND_SPEED_KM));
+        mWindSpeedMi = cursor.getInt(cursor.getColumnIndex(SimpleConditionDBEntry.COL_WIND_SPEED_MI));
+
+        mLocationId = cursor.getLong(cursor.getColumnIndex(SimpleConditionDBEntry.COL_LOCATION_ID));
     }
 
     public String getObservationTime() {
         return mObservationTime;
-    }
-
-    public Integer getCloudCover() {
-        return mCloudCover;
-    }
-
-    public Integer getFeelTempC() {
-        return mFeelTempC;
-    }
-
-    public Integer getFeelTempF() {
-        return mFeelTempF;
     }
 
     public Double getHumidity() {
@@ -143,12 +145,7 @@ public class CurrentCondition extends JSONParser implements IDatabaseSavable {
         return mWindSpeedMi;
     }
 
-    //TODO validate URL
-    /*public URL getIconURL() {
-        return mWeatherIconUrl;
-    }*/
-
-    public String getIconURL() {
+    public URL getIconURL() {
         return mWeatherIconUrl;
     }
 
@@ -160,12 +157,28 @@ public class CurrentCondition extends JSONParser implements IDatabaseSavable {
         return mTimestamp;
     }
 
+    public void setLocationId(long locationId) {
+        mLocationId = locationId;
+    }
+
+    public long getLocationId() {
+        return mLocationId;
+    }
+
     @Override
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
-        values.put(SimpleConditionDBEntry.COL_DESCRIPTION, mWeatherDescription);
+        values.put(SimpleConditionDBEntry.COL_LOCATION_ID, mLocationId);
+        values.put(SimpleConditionDBEntry.COL_HUMIDITY, mHumidity);
+        values.put(SimpleConditionDBEntry.COL_PRESSURE, mPressure);
+        values.put(SimpleConditionDBEntry.COL_PRECIP_MM, mPrecipMM);
+        values.put(SimpleConditionDBEntry.COL_PRECIP_IN, mPrecipInch);
         values.put(SimpleConditionDBEntry.COL_TEMP_C, mTempC);
         values.put(SimpleConditionDBEntry.COL_TEMP_F, mTempF);
+        values.put(SimpleConditionDBEntry.COL_DESCRIPTION, mWeatherDescription);
+        values.put(SimpleConditionDBEntry.COL_WIND_DIRECTION, mWindDir.getAbbreviation());
+        values.put(SimpleConditionDBEntry.COL_WIND_SPEED_KM, mWindSpeedKm);
+        values.put(SimpleConditionDBEntry.COL_WIND_SPEED_MI, mWindSpeedMi);
         values.put(SimpleConditionDBEntry.COL_DATE, mTimestamp);
         return values;
     }
@@ -175,13 +188,17 @@ public class CurrentCondition extends JSONParser implements IDatabaseSavable {
         return SimpleConditionDBEntry.TABLE_NAME;
     }
 
+    /**
+     * Strategy for storing Current condition is to always keep only one entry in the DB
+     * it is the last known condition, so it can be shown right when application is started
+     */
     @Override
     public String getPrimaryColumnName() {
-        return SimpleConditionDBEntry.COL_DATE;
+        return SimpleConditionDBEntry.COL_ID;
     }
 
     @Override
     public String getPrimaryColumnValue() {
-        return String.valueOf(mTimestamp);
+        return String.valueOf(1);
     }
 }

@@ -6,7 +6,7 @@ package com.doodeec.weather.android.database.model;
 public abstract class LocationDBEntry {
 
     public static final String TABLE_NAME = "location";
-    public static final String COL_ID = "id";
+    public static final String COL_ID = "_id";
     public static final String COL_LATITUDE = "latitude";
     public static final String COL_LONGITUDE = "longitude";
     public static final String COL_REGION = "region";
