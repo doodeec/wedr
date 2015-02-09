@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.doodeec.weather.android.R;
 import com.doodeec.weather.android.activity.drawer.DrawerMenuItem;
+import com.doodeec.weather.android.view.DrawerMenuFooterViewHolder;
 import com.doodeec.weather.android.view.DrawerMenuItemViewHolder;
 
 /**
@@ -14,7 +15,10 @@ import com.doodeec.weather.android.view.DrawerMenuItemViewHolder;
  *
  * @author Dusan Bartos
  */
-public class DrawerAdapter extends RecyclerView.Adapter<DrawerMenuItemViewHolder> {
+public class DrawerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int TYPE_ITEM = 0;
+    private static final int TYPE_FOOTER = 1;
 
     private DrawerMenuItem[] mMenuItems;
     private LayoutInflater mInflater;
@@ -29,21 +33,35 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerMenuItemViewHolder
     }
 
     @Override
-    public DrawerMenuItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new DrawerMenuItemViewHolder(mInflater.inflate(R.layout.drawer_item_view_holder, parent, false));
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_ITEM) {
+            return new DrawerMenuItemViewHolder(
+                    mInflater.inflate(R.layout.drawer_item_view_holder, parent, false));
+        } else {
+            return new DrawerMenuFooterViewHolder(
+                    mInflater.inflate(R.layout.drawer_footer_view_holder, parent, false));
+        }
     }
 
     @Override
-    public void onBindViewHolder(DrawerMenuItemViewHolder holder, int position) {
-        DrawerMenuItem menuItem = mMenuItems[position];
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof DrawerMenuItemViewHolder) {
+            DrawerMenuItem menuItem = mMenuItems[position];
+            DrawerMenuItemViewHolder viewHolder = (DrawerMenuItemViewHolder) holder;
 
-        holder.setIcon(menuItem.getIconResource());
-        holder.setLabel(menuItem.getTitleResource());
+            viewHolder.setIcon(menuItem.getIconResource());
+            viewHolder.setLabel(menuItem.getTitleResource());
+        }
     }
 
     @Override
     public int getItemCount() {
         return mMenuItems.length;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position == mMenuItems.length - 1 ? TYPE_FOOTER : TYPE_ITEM;
     }
 
     public DrawerMenuItem getItem(int position) {

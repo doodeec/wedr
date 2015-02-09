@@ -12,7 +12,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.doodeec.weather.android.R;
 import com.doodeec.weather.android.activity.drawer.DrawerMenuItem;
@@ -31,8 +30,6 @@ import butterknife.InjectView;
  */
 public abstract class BaseDrawerActivity extends ActionBarActivity implements RecyclerViewItemClickListener.OnItemClickListener {
 
-    @InjectView(R.id.drawer_area)
-    RelativeLayout mDrawerArea;
     @InjectView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
     @InjectView(R.id.drawer_menu)
@@ -49,13 +46,14 @@ public abstract class BaseDrawerActivity extends ActionBarActivity implements Re
 
         ButterKnife.inject(this);
 
-        if (mDrawerArea == null || mDrawerLayout == null || mDrawerMenu == null) {
+        if (mDrawerLayout == null || mDrawerMenu == null) {
             throw new AssertionError("Base drawer activity has invalid layout");
         }
 
         mDrawerAdapter = new DrawerAdapter(this, new DrawerMenuItem[]{
                 new DrawerMenuItem(R.string.drawer_today, R.drawable.ic_drawer_today_dark),
-                new DrawerMenuItem(R.string.drawer_forecast, R.drawable.ic_drawer_forecast_dark)
+                new DrawerMenuItem(R.string.drawer_forecast, R.drawable.ic_drawer_forecast_dark),
+                null
         });
 
         mDrawerMenu.setLayoutManager(new LinearLayoutManager(this));
@@ -143,7 +141,7 @@ public abstract class BaseDrawerActivity extends ActionBarActivity implements Re
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(mDrawerArea)) {
+                if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
                     mDrawerLayout.closeDrawers();
                 } else {
                     mDrawerLayout.openDrawer(Gravity.START);
@@ -167,7 +165,7 @@ public abstract class BaseDrawerActivity extends ActionBarActivity implements Re
     }
 
     private void hideDrawer() {
-        if (mDrawerLayout.isDrawerOpen(mDrawerArea)) {
+        if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
             mDrawerLayout.closeDrawers();
         }
     }

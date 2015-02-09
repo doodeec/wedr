@@ -3,6 +3,7 @@ package com.doodeec.weather.android.client.data;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 
 import com.doodeec.weather.android.WedrApplication;
 import com.doodeec.weather.android.client.data.model.CurrentCondition;
@@ -13,6 +14,8 @@ import com.doodeec.weather.android.database.model.LocationDBEntry;
 import com.doodeec.weather.android.database.model.SimpleConditionDBEntry;
 import com.doodeec.weather.android.util.WedrLog;
 
+import java.util.Observable;
+
 /**
  * @author Dusan Bartos
  */
@@ -21,6 +24,7 @@ public class SessionData {
     private static SessionData sInstance;
 
     private WeatherData mWeatherData;
+    private GeoLocation mGeoLocation;
     private long mLastUpdate;
 
     /**
@@ -35,6 +39,7 @@ public class SessionData {
                 if (sInstance == null) {
                     sInstance = new SessionData();
                     sInstance.mWeatherData = new WeatherData();
+                    sInstance.mGeoLocation = new GeoLocation();
 
                     SQLiteDatabase db = new DatabaseHelper(WedrApplication.getContext()).getReadableDatabase();
                     sInstance.loadStoredCondition(db);
@@ -72,6 +77,10 @@ public class SessionData {
 
     public WeatherData getWeatherData() {
         return mWeatherData;
+    }
+
+    public GeoLocation getGeoLocation() {
+        return mGeoLocation;
     }
 
     public long getLastUpdateTimestamp() {
@@ -133,5 +142,34 @@ public class SessionData {
         }
 
         return newRowId;
+    }
+
+    /**
+     * Helper for storing geolocation data
+     */
+    public static class GeoLocation extends Observable {
+        private boolean mOngoingLocationRequest;
+        private Location mLocation;
+
+        public GeoLocation() {
+        }
+
+        public void setLocation(Location location) {
+            mLocation = location;
+            setChanged();
+            notifyObservers();
+        }
+
+        public void setOngoingRequest(boolean isActive) {
+            mOngoingLocationRequest = isActive;
+        }
+
+        public boolean getOngoingRequest() {
+            return mOngoingLocationRequest;
+        }
+        
+        public Location getLocation() {
+            return mLocation;
+        }
     }
 }

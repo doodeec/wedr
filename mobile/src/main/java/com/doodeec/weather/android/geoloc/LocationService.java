@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 import com.doodeec.weather.android.WedrApplication;
+import com.doodeec.weather.android.client.data.SessionData;
 import com.doodeec.weather.android.util.WedrLog;
 
 /**
@@ -17,20 +18,10 @@ import com.doodeec.weather.android.util.WedrLog;
  */
 public class LocationService {
 
-    private static OnLocationRetrievedListener sListener;
-
     /**
      * Requests single location report
-     *
-     * @param listener location request listener
      */
-    public static void requestLocation(OnLocationRetrievedListener listener) {
-        // request without listener is useless
-        if (listener == null) return;
-
-        // store listener as a static variable
-        sListener = listener;
-
+    public static boolean requestLocation() {
         LocationManager locationManager = (LocationManager) WedrApplication.getContext()
                 .getSystemService(Context.LOCATION_SERVICE);
 
@@ -42,15 +33,16 @@ public class LocationService {
         // request location
         if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            SessionData.getInstance().getGeoLocation().setOngoingRequest(true);
             locationManager.requestSingleUpdate(
                     criteria,
                     new LocationListener() {
                         @Override
                         public void onLocationChanged(Location location) {
                             WedrLog.d("Location changed: LAT " + location.getLatitude() + " LON " + location.getLongitude());
-                            sListener.onLocation(location.getLatitude(), location.getLongitude());
-                            // release listener for GC
-                            sListener = null;
+                            // notifies all observers
+                            SessionData.getInstance().getGeoLocation().setLocation(location);
+                            SessionData.getInstance().getGeoLocation().setOngoingRequest(false);
                         }
 
                         @Override
@@ -68,28 +60,10 @@ public class LocationService {
                             WedrLog.w("Location provider disabled");
                         }
                     }, null);
+            return true;
         } else {
-            WedrLog.d("Provider not enabled");
-            sListener.onLocationError();
-            sListener = null;
+            WedrLog.w("Provider not enabled");
+            return false;
         }
-    }
-
-    /**
-     * Listener for location request
-     */
-    public interface OnLocationRetrievedListener {
-        /**
-         * Fires when location is retrieved
-         *
-         * @param latitude  location latitude
-         * @param longitude location longitude
-         */
-        void onLocation(double latitude, double longitude);
-
-        /**
-         * Fires when neither GPS not network location provider is available
-         */
-        void onLocationError();
     }
 }

@@ -1,6 +1,8 @@
 package com.doodeec.weather.android.activity;
 
+import android.app.AlertDialog;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -16,12 +18,17 @@ import com.doodeec.weather.android.fragment.TodayFragment;
 import com.doodeec.weather.android.geoloc.LocationService;
 import com.doodeec.weather.android.util.WedrLog;
 
-public class TodayActivity extends BaseDrawerActivity implements TodayFragment.OnTodayInteractionListener,
-        LocationService.OnLocationRetrievedListener {
+import java.util.Observable;
+import java.util.Observer;
+
+public class TodayActivity extends BaseDrawerActivity implements TodayFragment.OnTodayInteractionListener, Observer {
+
+    private static final String BUNDLE_LOADING = "loading";
 
     private CancellableServerRequest mLoadWeatherRequest;
     private CancellableServerRequest mLoadIconRequest;
     private TodayFragment mTodayFragment;
+    private boolean mWasRefreshing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +38,16 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, TodayFragment.newInstance(), TodayFragment.TODAY_FRG_TAG)
                     .commit();
+        } else {
+            mWasRefreshing = savedInstanceState.getBoolean(BUNDLE_LOADING);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mTodayFragment = (TodayFragment) getSupportFragmentManager().findFragmentByTag(TodayFragment.TODAY_FRG_TAG);
+        mTodayFragment = (TodayFragment) getSupportFragmentManager()
+                .findFragmentByTag(TodayFragment.TODAY_FRG_TAG);
 
         // load stored data
         if (SessionData.getInstance().getWeatherData().getCondition() != null &&
@@ -45,16 +55,39 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
             if (mTodayFragment.isAdded()) {
                 mTodayFragment.updateData(SessionData.getInstance().getWeatherData());
                 mTodayFragment.showEmptyDataMessage(false);
+                loadWeatherIcon(SessionData.getInstance().getWeatherData());
             }
         }
 
         long now = System.currentTimeMillis();
-        if (now - SessionData.getInstance().getLastUpdateTimestamp() > WedrConfig.WEATHER_THRESHOLD) {
+        if (now - SessionData.getInstance().getLastUpdateTimestamp() > WedrConfig.WEATHER_THRESHOLD
+                || mWasRefreshing) {
             onRefreshInvoked();
         }
+
+        SessionData.getInstance().getGeoLocation().addObserver(this);
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mTodayFragment.isAdded()) {
+            outState.putBoolean(BUNDLE_LOADING, mTodayFragment.isRefreshing());
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        Location location = ((SessionData.GeoLocation) observable).getLocation();
+        onLocation(location.getLatitude(), location.getLongitude());
+    }
+
+    /**
+     * Fired when location provider updates location
+     *
+     * @param latitude  current location latitude
+     * @param longitude current location longitude
+     */
     public void onLocation(double latitude, double longitude) {
         mTodayFragment.setRefreshing(true);
         mLoadWeatherRequest = APIService.loadWeatherForLocation(latitude, longitude,
@@ -63,9 +96,7 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                     public void onError(RequestError requestError) {
                         WedrLog.e("Error loading weather: " + requestError.getMessage());
                         Toast.makeText(TodayActivity.this, R.string.weather_data_error, Toast.LENGTH_SHORT).show();
-                        if (mTodayFragment.isAdded()) {
-                            mTodayFragment.setRefreshing(false);
-                        }
+                        mTodayFragment.setRefreshing(false);
                         mLoadWeatherRequest = null;
                     }
 
@@ -85,9 +116,7 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                     @Override
                     public void onCancelled() {
                         WedrLog.w("Weather loading cancelled");
-                        if (mTodayFragment.isAdded()) {
-                            mTodayFragment.setRefreshing(false);
-                        }
+                        mTodayFragment.setRefreshing(false);
                         mLoadWeatherRequest = null;
                     }
 
@@ -95,11 +124,6 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                     public void onProgress(Integer integer) {
                     }
                 });
-    }
-
-    @Override
-    public void onLocationError() {
-        Toast.makeText(this, R.string.location_error, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -115,12 +139,26 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
             mLoadIconRequest.cancel(true);
             mLoadIconRequest = null;
         }
+
+        SessionData.getInstance().getGeoLocation().deleteObserver(this);
         super.onPause();
     }
 
     @Override
     public void onRefreshInvoked() {
-        LocationService.requestLocation(this);
+        if (!SessionData.getInstance().getGeoLocation().getOngoingRequest()) {
+            mTodayFragment.setRefreshing(true);
+
+            if (!LocationService.requestLocation()) {
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.location_unavailable_title)
+                        .setMessage(R.string.location_unavailable_message)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+
+                mTodayFragment.setRefreshing(false);
+            }
+        }
     }
 
     /**

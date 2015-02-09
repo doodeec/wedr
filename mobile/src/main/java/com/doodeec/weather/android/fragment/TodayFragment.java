@@ -72,11 +72,6 @@ public class TodayFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_today, container, false);
 
@@ -117,9 +112,25 @@ public class TodayFragment extends Fragment {
         mListener = null;
     }
 
+    /**
+     * Sets refresh layout indicator
+     *
+     * @param isRefreshing true to show indicator
+     */
     public void setRefreshing(boolean isRefreshing) {
-        mRefreshLayout.setOnRefreshListener(isRefreshing ? null : mRefreshListener);
-        mRefreshLayout.setRefreshing(isRefreshing);
+        if (isAdded()) {
+            mRefreshLayout.setOnRefreshListener(isRefreshing ? null : mRefreshListener);
+            mRefreshLayout.setRefreshing(isRefreshing);
+        }
+    }
+
+    /**
+     * Gets current refresh status
+     *
+     * @return true if refresh is currently ongoing
+     */
+    public boolean isRefreshing() {
+        return mRefreshLayout.isRefreshing();
     }
 
     /**

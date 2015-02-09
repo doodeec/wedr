@@ -28,6 +28,10 @@
     <string name="drawer_forecast">Forecast</string>
     <string name="drawer_content_description">Menu item</string>
 
+    <!--Location error dialog-->
+    <string name="location_unavailable_title">Location not available</string>
+    <string name="location_unavailable_message">Location is not available. Turn GPS on and try again.</string>
+    
     <!--About dialog-->
     <string name="about_title">About</string>
     <string name="about_message">This is Android test project implemented by Dusan Bartos</string>
