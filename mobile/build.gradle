@@ -20,7 +20,7 @@ android {
     signingConfigs {
         release {
             // passwords and alias are obtained via askForPasswords task
-//            storeFile file("../${project.property('keystore.file')}")
+            storeFile file("../${project.property('keystore.file')}")
             storePassword ""
             keyAlias ""
             keyPassword ""
@@ -85,7 +85,6 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:recyclerview-v7:21.0.3'
     compile 'com.jakewharton:butterknife:6.1.0'
