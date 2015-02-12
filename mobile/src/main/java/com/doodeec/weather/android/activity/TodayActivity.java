@@ -1,6 +1,6 @@
 package com.doodeec.weather.android.activity;
 
-import android.app.AlertDialog;
+import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
@@ -15,20 +15,32 @@ import com.doodeec.weather.android.client.APIService;
 import com.doodeec.weather.android.client.data.SessionData;
 import com.doodeec.weather.android.client.data.WeatherData;
 import com.doodeec.weather.android.fragment.TodayFragment;
-import com.doodeec.weather.android.geoloc.LocationService;
 import com.doodeec.weather.android.util.WedrLog;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.Observable;
 import java.util.Observer;
 
-public class TodayActivity extends BaseDrawerActivity implements TodayFragment.OnTodayInteractionListener, Observer {
+public class TodayActivity extends BaseDrawerActivity implements TodayFragment.OnTodayInteractionListener,
+        Observer,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     private static final String BUNDLE_LOADING = "loading";
+    private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     private CancellableServerRequest mLoadWeatherRequest;
     private CancellableServerRequest mLoadIconRequest;
     private TodayFragment mTodayFragment;
     private boolean mWasRefreshing = false;
+
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +53,25 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
         } else {
             mWasRefreshing = savedInstanceState.getBoolean(BUNDLE_LOADING);
         }
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        // Create the LocationRequest object
+        mLocationRequest = LocationRequest.create()
+                .setNumUpdates(1)
+                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mGoogleApiClient.connect();
+
         mTodayFragment = (TodayFragment) getSupportFragmentManager()
                 .findFragmentByTag(TodayFragment.TODAY_FRG_TAG);
 
@@ -79,6 +105,84 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
     @Override
     public void update(Observable observable, Object data) {
         Location location = ((SessionData.GeoLocation) observable).getLocation();
+        onLocation(location.getLatitude(), location.getLongitude());
+    }
+
+    @Override
+    protected void onPause() {
+        // stop loading request if activity is paused
+        if (mLoadWeatherRequest != null) {
+            WedrLog.w("Cancelling weather loading");
+            mLoadWeatherRequest.cancel(true);
+            mLoadWeatherRequest = null;
+        }
+        if (mLoadIconRequest != null) {
+            WedrLog.w("Cancelling weather icon loading");
+            mLoadIconRequest.cancel(true);
+            mLoadIconRequest = null;
+        }
+
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
+
+        SessionData.getInstance().getGeoLocation().deleteObserver(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onRefreshInvoked() {
+        if (!SessionData.getInstance().getGeoLocation().getOngoingRequest()) {
+            mTodayFragment.setRefreshing(true);
+
+            //TODO use GoogleApi instead of locationService
+            /*if (!LocationService.requestLocation()) {
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.location_unavailable_title)
+                        .setMessage(R.string.location_unavailable_message)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+
+                mTodayFragment.setRefreshing(false);
+            }*/
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        WedrLog.w("Connection suspended");
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        WedrLog.d("Connected Google API");
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (location != null) {
+            onLocation(location.getLatitude(), location.getLongitude());
+        }
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        WedrLog.e("Connection failed");
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            } catch (IntentSender.SendIntentException e) {
+                e.printStackTrace();
+            }
+        } else {
+            WedrLog.e("Location services connection failed with code " + connectionResult.getErrorCode());
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        WedrLog.d("Location changed");
         onLocation(location.getLatitude(), location.getLongitude());
     }
 
@@ -124,41 +228,6 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                     public void onProgress(Integer integer) {
                     }
                 });
-    }
-
-    @Override
-    protected void onPause() {
-        // stop loading request if activity is paused
-        if (mLoadWeatherRequest != null) {
-            WedrLog.w("Cancelling weather loading");
-            mLoadWeatherRequest.cancel(true);
-            mLoadWeatherRequest = null;
-        }
-        if (mLoadIconRequest != null) {
-            WedrLog.w("Cancelling weather icon loading");
-            mLoadIconRequest.cancel(true);
-            mLoadIconRequest = null;
-        }
-
-        SessionData.getInstance().getGeoLocation().deleteObserver(this);
-        super.onPause();
-    }
-
-    @Override
-    public void onRefreshInvoked() {
-        if (!SessionData.getInstance().getGeoLocation().getOngoingRequest()) {
-            mTodayFragment.setRefreshing(true);
-
-            if (!LocationService.requestLocation()) {
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.location_unavailable_title)
-                        .setMessage(R.string.location_unavailable_message)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show();
-
-                mTodayFragment.setRefreshing(false);
-            }
-        }
     }
 
     /**
