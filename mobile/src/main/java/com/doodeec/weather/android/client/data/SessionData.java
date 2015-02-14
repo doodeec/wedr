@@ -55,8 +55,10 @@ public class SessionData {
 
     public void setWeatherData(WeatherData weatherData) {
         mWeatherData = weatherData;
-        mLastUpdate = System.currentTimeMillis();
-        mWeatherData.getCondition().setTimestamp(mLastUpdate);
+        if (weatherData.getCondition() != null) {
+            mLastUpdate = System.currentTimeMillis();
+            mWeatherData.getCondition().setTimestamp(mLastUpdate);
+        }
 
         // save data to database
         SQLiteDatabase db = new DatabaseHelper(WedrApplication.getContext()).getReadableDatabase();
@@ -167,7 +169,7 @@ public class SessionData {
         public boolean getOngoingRequest() {
             return mOngoingLocationRequest;
         }
-        
+
         public Location getLocation() {
             return mLocation;
         }
