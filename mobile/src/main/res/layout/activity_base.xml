@@ -4,7 +4,8 @@
                                         android:layout_height="match_parent"
                                         tools:context=".FeedActivity"
                                         android:id="@+id/drawer_layout"
-                                        android:fitsSystemWindows="true">
+                                        android:fitsSystemWindows="true"
+                                        android:background="@android:color/white">
 
     <FrameLayout
         android:id="@+id/container"

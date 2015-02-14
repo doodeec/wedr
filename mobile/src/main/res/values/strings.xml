@@ -10,6 +10,7 @@
     <string name="weather_data_error">Unable to load weather data. Check connection and try again</string>
 
     <!--Today activity-->
+    <string name="reading_location_message">Getting current location</string>
     <string name="condition_icon_description">Current condition icon</string>
     <string name="info_icon_description">Current condition info</string>
     <string name="data_not_available">Weather data not available.</string>

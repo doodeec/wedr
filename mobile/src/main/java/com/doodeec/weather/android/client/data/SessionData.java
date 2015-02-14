@@ -14,8 +14,6 @@ import com.doodeec.weather.android.database.model.LocationDBEntry;
 import com.doodeec.weather.android.database.model.SimpleConditionDBEntry;
 import com.doodeec.weather.android.util.WedrLog;
 
-import java.util.Observable;
-
 /**
  * @author Dusan Bartos
  */
@@ -149,7 +147,7 @@ public class SessionData {
     /**
      * Helper for storing geolocation data
      */
-    public static class GeoLocation extends Observable {
+    public static class GeoLocation {
         private boolean mOngoingLocationRequest;
         private Location mLocation;
 
@@ -158,8 +156,6 @@ public class SessionData {
 
         public void setLocation(Location location) {
             mLocation = location;
-            setChanged();
-            notifyObservers();
         }
 
         public void setOngoingRequest(boolean isActive) {

@@ -22,11 +22,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.Observable;
-import java.util.Observer;
-
 public class TodayActivity extends BaseDrawerActivity implements TodayFragment.OnTodayInteractionListener,
-        Observer,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
@@ -84,14 +80,6 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
                 loadWeatherIcon(SessionData.getInstance().getWeatherData());
             }
         }
-
-        long now = System.currentTimeMillis();
-        if (now - SessionData.getInstance().getLastUpdateTimestamp() > WedrConfig.WEATHER_THRESHOLD
-                || mWasRefreshing) {
-            onRefreshInvoked();
-        }
-
-        SessionData.getInstance().getGeoLocation().addObserver(this);
     }
 
     @Override
@@ -100,12 +88,6 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
             outState.putBoolean(BUNDLE_LOADING, mTodayFragment.isRefreshing());
         }
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void update(Observable observable, Object data) {
-        Location location = ((SessionData.GeoLocation) observable).getLocation();
-        onLocation(location.getLatitude(), location.getLongitude());
     }
 
     @Override
@@ -127,31 +109,21 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
             mGoogleApiClient.disconnect();
         }
 
-        SessionData.getInstance().getGeoLocation().deleteObserver(this);
         super.onPause();
     }
 
     @Override
     public void onRefreshInvoked() {
         if (!SessionData.getInstance().getGeoLocation().getOngoingRequest()) {
+            Toast.makeText(this, R.string.reading_location_message, Toast.LENGTH_SHORT).show();
             mTodayFragment.setRefreshing(true);
-
-            //TODO use GoogleApi instead of locationService
-            /*if (!LocationService.requestLocation()) {
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.location_unavailable_title)
-                        .setMessage(R.string.location_unavailable_message)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show();
-
-                mTodayFragment.setRefreshing(false);
-            }*/
+            updateLocation();
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        WedrLog.w("Connection suspended");
+        WedrLog.w("Google API connection suspended");
     }
 
     @Override
@@ -162,7 +134,11 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
             onLocation(location.getLatitude(), location.getLongitude());
         }
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        long now = System.currentTimeMillis();
+        if (now - SessionData.getInstance().getLastUpdateTimestamp() > WedrConfig.WEATHER_THRESHOLD
+                || mWasRefreshing) {
+            onRefreshInvoked();
+        }
     }
 
     @Override
@@ -182,8 +158,17 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
 
     @Override
     public void onLocationChanged(Location location) {
-        WedrLog.d("Location changed");
+        WedrLog.d("Location changed - LAT:" + location.getLatitude() + " LON:" + location.getLongitude());
+        SessionData.getInstance().getGeoLocation().setLocation(location);
+        SessionData.getInstance().getGeoLocation().setOngoingRequest(false);
         onLocation(location.getLatitude(), location.getLongitude());
+    }
+
+    private void updateLocation() {
+        WedrLog.d("Request location update");
+        SessionData.getInstance().getGeoLocation().setOngoingRequest(true);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
     }
 
     /**
