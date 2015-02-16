@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.text.ParseException;
+import java.util.Locale;
 
 /**
  * Service for getting data from API server
@@ -55,7 +56,7 @@ public class APIService {
             return null;
         }
 
-        String url = String.format(SERVER_URL_SKELETON,
+        String url = String.format(Locale.ENGLISH, SERVER_URL_SKELETON,
                 WedrConfig.API_KEY,
                 WedrConfig.FORECAST_DAYS,
                 latitude, longitude);

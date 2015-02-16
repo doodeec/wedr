@@ -24,6 +24,12 @@ public class WeatherDataParser {
         if (objectDefinition.has(WeatherData.KEY_DATA)) {
             JSONObject data = objectDefinition.getJSONObject(WeatherData.KEY_DATA);
 
+            if (data.has(WeatherData.KEY_ERROR)) {
+                JSONObject errorObject = data.getJSONArray(WeatherData.KEY_ERROR).getJSONObject(0);
+                throw new ParseException("Unable to parse weather data: " +
+                        errorObject.getString(WeatherData.KEY_MESSAGE), 0);
+            }
+
             if (data.has(NearestLocation.KEY_NEAREST)) {
                 weatherData.setNearestLocation(parseNearestLocationData(
                         data.getJSONArray(NearestLocation.KEY_NEAREST)));
@@ -32,6 +38,9 @@ public class WeatherDataParser {
             if (data.has(CurrentCondition.KEY_CONDITION)) {
                 weatherData.setCondition(parseCurrentConditionData(
                         data.getJSONArray(CurrentCondition.KEY_CONDITION)));
+            } else {
+                throw new ParseException("Unable to parse weather data, no 'current_condition'" +
+                        " attribute defined", 0);
             }
 
             if (data.has(DailyForecast.KEY_WEATHER)) {
@@ -43,6 +52,8 @@ public class WeatherDataParser {
                     weatherData.addForecast(dailyForecast);
                 }
             }
+        } else {
+            throw new ParseException("Unable to parse weather data, no 'data' attribute defined", 0);
         }
 
         return weatherData;

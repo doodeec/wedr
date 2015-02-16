@@ -56,22 +56,22 @@ public class SessionData {
         if (weatherData.getCondition() != null) {
             mLastUpdate = System.currentTimeMillis();
             mWeatherData.getCondition().setTimestamp(mLastUpdate);
-        }
 
-        // save data to database
-        SQLiteDatabase db = new DatabaseHelper(WedrApplication.getContext()).getReadableDatabase();
-        try {
-            db.beginTransaction();
-            // store location
-            long locationId = saveContentToDb(db, weatherData.getNearestLocation(), true);
-            if (locationId != -1) {
-                weatherData.getCondition().setLocationId(locationId);
-                // store simple condition information
-                saveContentToDb(db, weatherData.getCondition(), false);
+            // save data to database
+            SQLiteDatabase db = new DatabaseHelper(WedrApplication.getContext()).getReadableDatabase();
+            try {
+                db.beginTransaction();
+                // store location
+                long locationId = saveContentToDb(db, weatherData.getNearestLocation(), true);
+                if (locationId != -1) {
+                    weatherData.getCondition().setLocationId(locationId);
+                    // store simple condition information
+                    saveContentToDb(db, weatherData.getCondition(), false);
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
             }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
         }
     }
 
