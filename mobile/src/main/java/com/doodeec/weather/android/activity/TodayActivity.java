@@ -17,6 +17,7 @@ import com.doodeec.weather.android.client.data.WeatherData;
 import com.doodeec.weather.android.fragment.TodayFragment;
 import com.doodeec.weather.android.util.WedrLog;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -114,10 +115,18 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
 
     @Override
     public void onRefreshInvoked() {
-        if (!SessionData.getInstance().getGeoLocation().getOngoingRequest()) {
-            Toast.makeText(this, R.string.reading_location_message, Toast.LENGTH_SHORT).show();
-            mTodayFragment.setRefreshing(true);
-            updateLocation();
+        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) != ConnectionResult.SUCCESS) {
+            Toast.makeText(this, R.string.common_google_play_services_unsupported_text, Toast.LENGTH_SHORT).show();
+            mTodayFragment.setRefreshing(false);
+        } else if (mGoogleApiClient.isConnected()) {
+            if (!SessionData.getInstance().getGeoLocation().getOngoingRequest()) {
+                Toast.makeText(this, R.string.reading_location_message, Toast.LENGTH_SHORT).show();
+                mTodayFragment.setRefreshing(true);
+                updateLocation();
+            }
+        } else {
+            Toast.makeText(this, R.string.google_play_not_connected, Toast.LENGTH_SHORT).show();
+            mTodayFragment.setRefreshing(false);
         }
     }
 
@@ -168,7 +177,6 @@ public class TodayActivity extends BaseDrawerActivity implements TodayFragment.O
         WedrLog.d("Request location update");
         SessionData.getInstance().getGeoLocation().setOngoingRequest(true);
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
     }
 
     /**

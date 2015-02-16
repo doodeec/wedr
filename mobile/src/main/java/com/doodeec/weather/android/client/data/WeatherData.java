@@ -14,6 +14,8 @@ import java.util.Observable;
 public class WeatherData extends Observable {
 
     public static final String KEY_DATA = "data";
+    public static final String KEY_ERROR = "error";
+    public static final String KEY_MESSAGE = "msg";
 
     private NearestLocation mNearestLocation;
     private CurrentCondition mCurCondition;

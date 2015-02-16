@@ -8,6 +8,7 @@
     
     <string name="location_error">Location unavailable</string>
     <string name="weather_data_error">Unable to load weather data. Check connection and try again</string>
+    <string name="google_play_not_connected">Unable to get location. Check connection and try again</string>
 
     <!--Today activity-->
     <string name="reading_location_message">Getting current location</string>

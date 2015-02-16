@@ -1,12 +1,8 @@
 package com.doodeec.weather.android.view;
 
 import android.graphics.Bitmap;
-import android.graphics.Outline;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewOutlineProvider;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.doodeec.weather.android.R;
@@ -34,7 +30,7 @@ public class ForecastViewHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.forecast_description)
     TextView mDescription;
     @InjectView(R.id.weather_icon)
-    ImageView mWeatherIcon;
+    OvalImageView mWeatherIcon;
     @InjectView(R.id.forecast_day)
     TextView mDay;
 
@@ -45,27 +41,6 @@ public class ForecastViewHolder extends RecyclerView.ViewHolder {
 
         if (mTemperature == null || mDescription == null || mWeatherIcon == null || mDay == null) {
             throw new AssertionError("Forecast view holder has invalid layout");
-        }
-
-        // clip to oval icon
-        // for Lollipop use outline provider, for pre-Lollipop devices fallback to OvalImageView
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ViewOutlineProvider viewOutlineProvider = new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    // Or read size directly from the view's width/height
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        int size = mWeatherIcon.getResources().getDimensionPixelSize(R.dimen.forecast_icon_size);
-                        outline.setOval(0, 0, size, size);
-                    }
-                }
-            };
-
-            mWeatherIcon.setOutlineProvider(viewOutlineProvider);
-            mWeatherIcon.setClipToOutline(true);
-        } else if (mWeatherIcon instanceof OvalImageView) {
-            ((OvalImageView) mWeatherIcon).setRadius(
-                    mWeatherIcon.getResources().getDimensionPixelSize(R.dimen.forecast_icon_size) / 2);
         }
     }
 

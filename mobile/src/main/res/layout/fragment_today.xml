@@ -24,9 +24,15 @@
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin">
 
-                    <include
-                        layout="@layout/today_weather_icon"
-                        android:id="@+id/today_weather_icon"/>
+                    <com.doodeec.weather.android.util.OvalImageView
+                        android:id="@+id/today_weather_icon"
+                        android:layout_width="@dimen/today_icon_size"
+                        android:layout_height="@dimen/today_icon_size"
+                        android:layout_marginTop="@dimen/padding"
+                        android:layout_centerHorizontal="true"
+                        android:scaleType="fitXY"
+                        android:contentDescription="@string/condition_icon_description"
+                        android:background="@drawable/shape_circle"/>
 
                     <TextView
                         android:id="@+id/location_region_country"
